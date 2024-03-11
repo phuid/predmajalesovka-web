@@ -1,5 +1,5 @@
 ### users
-- header
+- header - 3D BLUE RED EFFECT Viz https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow
 - email register form
 - last image
 - ig style grid se vsema stanovistema
