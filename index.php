@@ -27,26 +27,28 @@
     ?>
   </div>
   <div id="body">
-    <div id="grid-container">
+    <div id="flex-container">
       <?php
-      // for ($i = 0; $i < 14; $i++) {
-      //   echo "<div class='grid-tile' style=\"background-image: url(\'https://picsum.photos/720/1280\')\"></div>";
-      // }
+      $rounds_count = 14;
+      for ($i = 0; $i < $rounds_count; $i++) {
+        echo "<div class='round_row'>";
+        echo "<div class='round_nick'><p>15.3. \"ani nahoře, ani dole awawaw a w a sda sd asdasd asd\"</p></div>";
+
+        $img_width = rand(9, 20) * 40;
+        $img_height = rand(9, 20) * 40;
+        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+        
+        $img_width = rand(9, 20) * 40;
+        $img_height = rand(9, 20) * 40;
+        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+        
+        $img_width = rand(9, 20) * 40;
+        $img_height = rand(9, 20) * 40;
+        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+
+        echo "</div>";
+      }
       ?>
-      <div class="grid-tile"> THIS AINT WHAT I WANTED</div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
-      <div class="grid-tile"></div>
     </div>
   </div>
   <div id="navbar"></div>
