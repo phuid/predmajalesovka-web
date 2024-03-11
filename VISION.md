@@ -27,7 +27,7 @@
 
 ### users
 
-- header
+- header - 3D BLUE RED EFFECT Viz https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow
 - email subscribe form
 - google calendar style feed
 
