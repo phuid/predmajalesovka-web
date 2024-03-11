@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+:root {
+  --background: hsl(192, 15%, 10%);
+  --text: white;
+  --accent: red;
+}
+
+body {
+  color: var(--text);
+  background-color: var(--background);
+  font-family: 'Kanit', sans-serif;
+  height: 100vh;
+  margin: 0;
+  padding: 0 20px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+#body,
+#header,
+#navbar {
+  /* border: 1px solid var(--text); */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+ 
+#body::-webkit-scrollbar,
+#navbar::-webkit-scrollbar,
+#header::-webkit-scrollbar {
+  display: none;
+}
+
+#grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.grid-tile {
+  /* border: 1px solid var(--accent); */
+  border-radius: 5px;
+  aspect-ratio: 1;
+  margin: 0.2rem;
+  background-image: url("https://picsum.photos/720/1280");
+  background-repeat: no-repeat;
+  background-position: center; /* Center the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+#grid-container:hover > * {
+  opacity: 0.5;
+  transition: opacity 0.5s ease, transform 0.2s ease;
+}
+
+#grid-container:hover > *:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+@media screen and (orientation: landscape) {
+  body {
+    flex-direction: row;
+  }
+  #body,
+  #header,
+  #navbar {
+    overflow-y: scroll;
+  }
+  #header {
+    width: 30vw;
+  }
+  #body {
+    width: 40vw;
+  }
+  #navbar {
+    width: 20vw;
+  }
+
+  #grid-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(var(--background), rgba(255, 255, 255, 0.001));
+  }
+  #grid-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(rgba(255, 255, 255, 0.001), var(--background));
+  }
+}
+
+@media screen and (orientation: portrait) {
+  body {
+    flex-direction: column;
+  }
+}
