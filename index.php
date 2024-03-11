@@ -29,11 +29,11 @@
   <div id="body">
     <div id="grid-container">
       <?php
-      for ($i = 0; $i < 14; $i++) {
-        echo "<div class='grid-tile' style=\"background-image: url(\'https://picsum.photos/720/1280\')\"></div>";
-      }
+      // for ($i = 0; $i < 14; $i++) {
+      //   echo "<div class='grid-tile' style=\"background-image: url(\'https://picsum.photos/720/1280\')\"></div>";
+      // }
       ?>
-      <!-- <div class="grid-tile"> THIS AINT WHAT I WANTED</div>
+      <div class="grid-tile"> THIS AINT WHAT I WANTED</div>
       <div class="grid-tile"></div>
       <div class="grid-tile"></div>
       <div class="grid-tile"></div>
@@ -46,7 +46,7 @@
       <div class="grid-tile"></div>
       <div class="grid-tile"></div>
       <div class="grid-tile"></div>
-      <div class="grid-tile"></div> -->
+      <div class="grid-tile"></div>
     </div>
   </div>
   <div id="navbar"></div>

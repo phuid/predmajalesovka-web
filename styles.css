@@ -49,16 +49,16 @@ h1 {
   background-image: url("https://picsum.photos/720/1280");
   background-repeat: no-repeat;
   background-position: center; /* Center the image */
-  background-size: cover; /* Resize the background image to cover the entire container */
+  background-size: 100%; /* Resize the background image to cover the entire container */
 }
 
 #grid-container:hover > * {
   opacity: 0.5;
-  transition: opacity 0.5s ease, transform 0.2s ease;
+  transition: opacity 0.5s ease, background-size 0.2s ease;
 }
 
 #grid-container:hover > *:hover {
-  transform: scale(1.1);
+  background-size: 120%;
   opacity: 1;
 }
 
