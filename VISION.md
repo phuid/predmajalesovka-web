@@ -5,23 +5,36 @@
 
 ## db
 
-- zadani-imgs
-  - kolo_id (number not null)
-  - url
-- zadani-kola
-  - kolo_id (number not null)
-  - name
-  - start-time
-- tridy-casy
-  - kolo_id (number not null)
-  - trida
-  - cas
-  - img_url
-  - verified (bool)
-- tridy
-  - password (string)
-- emails
-  - email (string)
+```sql
+CREATE TABLE emails (
+    id int NOT NULL,
+    email varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE teams (
+    id int NOT NULL,
+    name varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE proofs (
+    id int NOT NULL,
+    round_id int NOT NULL,
+    team_id int NOT NULL,
+    time TIMESTAMP NOT NULL,
+    img_url varchar(255) NOT NULL,
+    verified boolean,
+    PRIMARY KEY (id)
+);
+CREATE TABLE rounds (
+    id int NOT NULL,
+    nickname varchar(255) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP DEFAULT '2024-05-01 00:00:00',
+    hint_folder varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+```
 
 ## vision
 

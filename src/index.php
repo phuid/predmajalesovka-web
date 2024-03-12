@@ -27,6 +27,8 @@
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
+    <h3 class="adminperm"><a href="add_round.php">Přidat kolo</a></h3>
+
   </div>
   <div id="body">
     <div id="flex-container">

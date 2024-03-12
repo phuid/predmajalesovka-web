@@ -8,8 +8,8 @@
 </head>
 <body>
 <h1>Předmajálesová hra</h1>
+<h4><a href="index.php">zpět na úvod</a></h4>
 <h2>Pravidla</h2>
-<h3><a href="index.php">zpět na úvod</a></h3>
 
 <ul>
       <li>Jednou za čas se tady na webu objeví nápověda ve formě fotky místa, kde je nálepka s logem majálesu.</li>

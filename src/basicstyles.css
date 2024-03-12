@@ -5,6 +5,7 @@
   --accent-blue: hsl(182, 98%, 23%);
   --accent-pink: hsl(302, 100%, 66%);
   --round-row-height: min(100vh / 3, 250px);
+  --link: hsl(179, 100%, 50%);
 }
 
 body {
@@ -13,12 +14,7 @@ body {
   color: var(--text);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1 {
   text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
 }
 
@@ -28,20 +24,20 @@ a {
 
 /* unvisited link */
 a:link {
-  color: rgba(255, 255, 255, 50);
-  text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
+  color: var(--link);
+  /* text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue); */
 }
 
 /* visited link */
 a:visited {
-  color: rgba(255, 255, 255, 50);
-  text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
+  color: var(--link);
+  /* text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue); */
 }
 
 /* mouse over link */
 a:hover {
-  color: rgba(255, 255, 255, 50);
-  text-shadow: -2px -1px var(--accent-pink), 2px 1px var(--accent-blue);
+  color: var(--link);
+  /* text-shadow: -2px -1px var(--accent-pink), 2px 1px var(--accent-blue); */
 }
 
 /* selected link */
@@ -64,4 +60,8 @@ h1 {
 
 .flex-space-between {
   justify-content: space-between;
+}
+
+.adminperm > a {
+  color: red;
 }

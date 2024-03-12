@@ -8,8 +8,8 @@
 </head>
 <body>
 <h1>Předmajálesová hra</h1>
+<h4><a href="index.php">zpět na úvod</a></h4>
 <h2>Registrace emailových notifikací</h2>
-<h3><a href="index.php">zpět na úvod</a></h3>
 <p>Po registraci emailových notifikací dostanete email pokaždé, když se na webu objeví nová nápověda. Je možné se z nich odhlásit (link na konci každého mailu).</p>
   <form action="add_email.php" method="get">
     <input type="email" placeholder="email" id="email" name="email">
