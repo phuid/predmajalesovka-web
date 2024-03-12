@@ -13,18 +13,16 @@
 
 <body>
   <div id="header">
+    <h3 id="account"></h3>
+
     <h1>Předmajálesová hra</h1>
-    <h3>tohle je some text ja nevim asi ig</h3>
-    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-    standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
-    type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-    Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of
-    Lorem Ipsum.
 
-    <?php
+    <h3><a href="email_registration.php">Registrace emailových notifikací o nových nápovědách</a></h3>
 
-    ?>
+    <h3><a href="results.php">Průběžné výsledky</a></h3>
+
+    <h3><a href="rules.php">Pravidla</a></h3>
+
   </div>
   <div id="body">
     <div id="flex-container">
@@ -32,7 +30,7 @@
       $rounds_count = 14;
       for ($i = 0; $i < $rounds_count; $i++) {
         echo "<div class='round_row'>";
-        echo "<div class='round_nick'><p>15.3. \"ani nahoře, ani dole awawaw a w a sda sd asdasd asd\"</p></div>";
+        echo "<div class='round_nick'><p>15.3. \"ani nahoře, ani dole \"</p></div>";
 
         $img_width = rand(9, 20) * 40;
         $img_height = rand(9, 20) * 40;
@@ -51,7 +49,6 @@
       ?>
     </div>
   </div>
-  <div id="navbar"></div>
 </body>
 
 </html>
