@@ -1,5 +1,5 @@
 ## todo
-- all pages + email unsub
+- all pages
 - admin actions on pages
 - store password on prihlaseni page to cookie and just check it when they try to do something
 

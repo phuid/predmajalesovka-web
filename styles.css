@@ -1,26 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
-
-:root {
-  --background: hsl(192, 15%, 10%);
-  --text: white;
-  --accent: red;
-  --round-row-height: min(100vh / 3, 250px);
-}
+@import url("https://fonts.googleapis.com/css2?family=Kanit&display=swap");
 
 body {
   color: var(--text);
   background-color: var(--background);
-  font-family: 'Kanit', sans-serif;
+  font-family: "Kanit", sans-serif;
   height: 100vh;
   margin: 0;
   padding: 0 20px 0 20px;
   display: flex;
   justify-content: space-between;
-  overflow: hidden;
-}
-
-h1 {
-  font-size: 3rem;
+  overflow-x: hidden;
 }
 
 #body,
@@ -29,7 +18,7 @@ h1 {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
- 
+
 #body::-webkit-scrollbar,
 #header::-webkit-scrollbar {
   display: none;
@@ -74,12 +63,17 @@ h1 {
 
 #flex-container:hover > * {
   opacity: 0.5;
-  transition: opacity 0.5s ease, background-size 0.2s ease;
+  transition: opacity 0.3s ease, background-size 0.2s ease;
 }
 
 #flex-container:hover > *:hover {
   background-size: 120%;
   opacity: 1;
+}
+
+#logo {
+  height: 5vh;
+  padding: 1vh;
 }
 
 @media screen and (orientation: landscape) {
@@ -98,7 +92,7 @@ h1 {
   }
 
   #flex-container::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     width: 100%;
@@ -106,7 +100,7 @@ h1 {
     background: linear-gradient(var(--background), rgba(255, 255, 255, 0.001));
   }
   #flex-container::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -118,5 +112,6 @@ h1 {
 @media screen and (orientation: portrait) {
   body {
     flex-direction: column;
+    overflow-y: scroll;
   }
 }

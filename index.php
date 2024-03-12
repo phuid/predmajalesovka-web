@@ -8,12 +8,16 @@
 
 
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="basicstyles.css">
   <script src="script.js" defer></script>
 </head>
 
 <body>
   <div id="header">
-    <h3 id="account"></h3>
+    <div class="flex flex-row flex-space-between">
+      <h3 id="account"></h3>
+      <img src="logo.png" alt="logo" id="logo">
+    </div>
 
     <h1>Předmajálesová hra</h1>
 

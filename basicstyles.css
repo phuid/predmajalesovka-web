@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit&display=swap");
+:root {
+  --background: hsl(192, 15%, 10%);
+  --text: white;
+  --accent-blue: hsl(182, 98%, 23%);
+  --accent-pink: hsl(302, 100%, 66%);
+  --round-row-height: min(100vh / 3, 250px);
+}
+
+body {
+  font-family: "Kanit", sans-serif;
+  background: var(--background);
+  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
+}
+
+a {
+  transition: text-shadow 0.1s ease;
+}
+
+/* unvisited link */
+a:link {
+  color: rgba(255, 255, 255, 50);
+  text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
+}
+
+/* visited link */
+a:visited {
+  color: rgba(255, 255, 255, 50);
+  text-shadow: 2px 1px var(--accent-pink), -2px -1px var(--accent-blue);
+}
+
+/* mouse over link */
+a:hover {
+  color: rgba(255, 255, 255, 50);
+  text-shadow: -2px -1px var(--accent-pink), 2px 1px var(--accent-blue);
+}
+
+/* selected link */
+a:active {
+  color: blue;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.flex-space-between {
+  justify-content: space-between;
+}
