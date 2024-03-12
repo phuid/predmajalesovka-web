@@ -1,3 +1,14 @@
+CREATE TABLE emails (
+    id int NOT NULL,
+    email varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE teams (
+    id int NOT NULL,
+    name varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
 CREATE TABLE proofs (
     id int NOT NULL,
     round_id int NOT NULL,
