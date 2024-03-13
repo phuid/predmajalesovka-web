@@ -48,10 +48,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kolo</title>
+  <link rel="stylesheet" href="basicstyles.css">
 </head>
 
 <body>
+  <h1>Předmajálesová hra</h1>
+  <h4><a href="index.php">zpět na úvod</a></h4>
+  <h2>Kolo <?php echo $round_id; ?></h2>
 
+  <h3>Čas: </h3>
+  <p id="timer"></p>
+
+  <h3>Váš důkaz:</h3>
+
+  <h3>Nápovědy:</h3>
+
+  <script>
+    let timer = document.getElementById('timer');
+    let countDownDate = new Date("<?php echo $row['end_time']; ?>").getTime();
+    let startDate = new Date("<?php echo $row['start_time']; ?>").getTime();
+
+    let x = setInterval(function() {
+      let now = new Date().getTime();
+      let distance = countDownDate - now;
+
+      let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      timer.innerHTML = "Zbývající: " + days + "d " + hours + "h " + minutes + "m " + seconds + "s "
+      + "<br>" + "Od startu: " + Math.floor((now - startDate) / 1000) + "s";
+
+      if (distance < 0) {
+        clearInterval(x);
+        timer.innerHTML = "Konec";
+      }
+    }, 1000);
+  </script>
 </body>
 
 </html>

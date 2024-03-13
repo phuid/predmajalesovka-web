@@ -19,21 +19,9 @@ CREATE TABLE teams (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE signins (
-    id int NOT NULL AUTO_INCREMENT,
-    team_id int NOT NULL,
-    time TIMESTAMP NOT NULL,
-    remote_addr varchar(255),
-    remote_port int,
-    http_x_forwarded_for varchar(255),
-    http_client_ip varchar(255),
-    http_user_agent varchar(255),
-    PRIMARY KEY (id)
-);
-
 -- https://www.random.org/strings/?num=12&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
 INSERT INTO teams (name, password, category) VALUES
-('admin', 'xxxxxxxxxx', 0),
+('admin', 'xxxxxxxxxx', 1),
 ('primaA', 'xxxxxxxxxx', 1),
 ('primaB', 'xxxxxxxxxx', 1),
 ('sekundaA', 'xxxxxxxxxx', 1),
@@ -56,17 +44,6 @@ CREATE TABLE proofs (
     img_url varchar(255) NOT NULL,
     verified boolean,
     deleted boolean DEFAULT false,
-    PRIMARY KEY (id)
-);
-CREATE TABLE proof_deletions (
-    id int NOT NULL AUTO_INCREMENT,
-    proof_id int NOT NULL,
-    time TIMESTAMP NOT NULL,
-    remote_addr varchar(255),
-    remote_port int,
-    http_x_forwarded_for varchar(255),
-    http_client_ip varchar(255),
-    http_user_agent varchar(255),
     PRIMARY KEY (id)
 );
 
