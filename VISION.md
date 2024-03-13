@@ -7,28 +7,73 @@
 
 ```sql
 CREATE TABLE emails (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     email varchar(255) NOT NULL,
     PRIMARY KEY (id)
 );
 CREATE TABLE teams (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
+    category int NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE signins (
+    id int NOT NULL AUTO_INCREMENT,
+    team_id int NOT NULL,
+    time TIMESTAMP NOT NULL,
+    remote_addr varchar(255),
+    remote_port int,
+    http_x_forwarded_for varchar(255),
+    http_client_ip varchar(255),
+    http_user_agent varchar(255),
+    PRIMARY KEY (id)
+);
+
+-- https://www.random.org/strings/?num=12&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
+INSERT INTO teams (name, password, category) VALUES
+('admin', 'xxxxxxxxxx', 0),
+('primaA', 'xxxxxxxxxx', 1),
+('primaB', 'xxxxxxxxxx', 1),
+('sekundaA', 'xxxxxxxxxx', 1),
+('sekundaB', 'xxxxxxxxxx', 1),
+('tercieA', 'xxxxxxxxxx', 1),
+('tercieB', 'xxxxxxxxxx', 1),
+('kvartaA', 'xxxxxxxxxx', 2),
+('kvartaB', 'xxxxxxxxxx', 2),
+('kvintaA', 'xxxxxxxxxx', 2),
+('kvintaB', 'xxxxxxxxxx', 2),
+('sextaA', 'xxxxxxxxxx', 2),
+('sextaB', 'xxxxxxxxxx', 2);
+
+
 CREATE TABLE proofs (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     round_id int NOT NULL,
     team_id int NOT NULL,
     time TIMESTAMP NOT NULL,
     img_url varchar(255) NOT NULL,
     verified boolean,
+    deleted boolean DEFAULT false,
     PRIMARY KEY (id)
 );
+CREATE TABLE proof_deletions (
+    id int NOT NULL AUTO_INCREMENT,
+    proof_id int NOT NULL,
+    time TIMESTAMP NOT NULL,
+    remote_addr varchar(255),
+    remote_port int,
+    http_x_forwarded_for varchar(255),
+    http_client_ip varchar(255),
+    http_user_agent varchar(255),
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE rounds (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     nickname varchar(255) NOT NULL,
+    category int NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP DEFAULT '2024-05-01 00:00:00',
     hint_folder varchar(255) NOT NULL,

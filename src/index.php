@@ -14,7 +14,7 @@
 
 <body>
   <div id="header">
-    <div class="flex flex-row flex-space-between">
+    <div class="flex flex-row flex-space-between" id="top-bar">
       <h3 id="account"></h3>
       <img src="logo.png" alt="logo" id="logo">
     </div>
@@ -27,7 +27,63 @@
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
-    <h3 class="adminperm"><a href="add_round.php">Přidat kolo</a></h3>
+    <h3 class="adminperm" style="color: red;" onclick="toggleVisibility(document.getElementById('new-round-form')); document.getElementById('new-round-form').scrollTo()"><u>Přidat kolo</u></h3>
+
+    <form action="add_round.php" method="post" enctype="multipart/form-data" class="adminperm" id="new-round-form">
+      <h3>Přidat kolo</h3>
+      <input type="text" name="nickname" placeholder="nickname">
+      <fieldset>
+        <legend>Kategorie:</legend>
+        <input type="checkbox" name="category_higher" value="1"> vyšší
+        <input type="checkbox" name="category_lower" value="2"> nižší
+      </fieldset>
+
+      <label for="new-round-end-time">Deadline:</label>
+      <input type="datetime-local" name="end" id="new-round-end-time">
+      <br>
+
+      <label for="first-hint-img">First hint:</label>
+      <input type="file" name="first-hint-img" id="first-hint-img">
+      <br>
+
+      <input type="button" value="Přidat" onclick="sendData()">
+    </form>
+
+    <script>
+      function sendData(data) {
+        // Construct a FormData instance
+        const myform = document.getElementById('new-round-form');
+        const formData = new FormData(myform);
+
+        // let password = document.cookie.replace(/(?:(?:^|.*;\s*)password\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        // console.log(password);
+        // formData.append("password", password);
+
+        fetch("add_round.php", {
+          method: "POST",
+          // Set the FormData instance as the request body
+          body: formData,
+        }).then(
+          (response) => {
+            if (response.status === 200) {
+              console.log("success");
+              myform.reset();
+              // setTimeout(() => location.reload(), 1000);
+              response.text().then((txt) => {
+                console.log(txt);
+                if (confirm("Round created\nDo you want to go to the new round's page?")) {
+                  window.location.href = txt;
+                }
+              });
+            } else {
+              console.log("fail");
+              response.text().then(txt => alert("Round create failed, status: " + response.status + "\nmessage: " + txt));
+            }
+            response.text().then(txt => console.log(txt));
+          }
+        ).catch(e => console.log(e));
+      }
+    </script>
 
   </div>
   <div id="body">
@@ -41,11 +97,11 @@
         $img_width = rand(9, 20) * 40;
         $img_height = rand(9, 20) * 40;
         echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
-        
+
         $img_width = rand(9, 20) * 40;
         $img_height = rand(9, 20) * 40;
         echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
-        
+
         $img_width = rand(9, 20) * 40;
         $img_height = rand(9, 20) * 40;
         echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";

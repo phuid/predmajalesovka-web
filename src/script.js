@@ -1,21 +1,30 @@
-function loadAccount() {
-  console.log("Loading account");
-  var account = document.getElementById("account");
-  var password = document.cookie.replace(/(?:(?:^|.*;\s*)password\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-  if (password) {
-    if (accountName) {
-      console.log("Account name found");
-      account.innerHTML = "Účet:" + accountName + ", <a href=\"login.php\">Změnit přihlášení</a>";
-    }
-    else {
-      console.log("No account name found");
-      account.innerHTML = "Přihlášení se nezdařilo, <a href=\"login.php\">zkuste to znovu.</a>";
-    }
+function toggleVisibility(x) {
+  if (x.style.display === "none") {
+    x.style.display = "block";
   } else {
-    console.log("No password found");
-    account.innerHTML = "<a href=\"login.php\">Příhlásit se</a>";
+    x.style.display = "none";
   }
+}
+
+function loadAccount() {
+  fetch('accountName.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+  .then((r) => {
+    if (r.status != 200) {
+      document.getElementById("account").innerHTML = "<a href='login.php'>Přihlásit se k týmu</a>";
+      return;
+    }
+    r.text().then((txt) => {
+      document.getElementById("account").innerHTML = "Přihlášený tým: " + txt + "<br> <a href='login.php'>Změnit přihlášení</a>";
+      return;
+    })
+  }).catch(function(err) {
+    console.log('Error: ' + err);
+  });
 }
 
 function resizeRoundNicks() {
@@ -25,12 +34,19 @@ function resizeRoundNicks() {
     var nickWidth = nick.children[0].clientHeight;
     var nickHeight = nick.children[0].clientWidth;
     nick.style.width = nickWidth + "px";
-    nick.style.transform = "translate(-" + (nickHeight / 2 - nickWidth / 2) + "px, 0)";
+    nick.style.transform =
+      "translate(-" + (nickHeight / 2 - nickWidth / 2) + "px, 0)";
   }
+}
+
+var r = document.querySelector(':root');
+function resizeHeader() {
+  r.style.setProperty('--', 'lightblue');
 }
 
 function resize() {
   resizeRoundNicks();
+  resizeHeader();
 }
 
 window.onresize = resize();

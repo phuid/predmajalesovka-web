@@ -29,6 +29,15 @@ body {
   flex-direction: column;
 }
 
+#new-round-form {
+  border: 2px solid red;
+  display: none;
+}
+
+#top-bar {
+  height: 5rem;
+}
+
 .round_row {
   display: flex;
   flex-direction: row;
