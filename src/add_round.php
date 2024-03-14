@@ -31,19 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Missing argument: first-hint-img";
             $missing_arguments = true;
           }
-          if (!isset($_POST['nickname'])) {
+          if (!isset($_POST['nickname']) || $_POST['nickname'] == "") {
             echo "Missing argument: nickname";
             $missing_arguments = true;
           }
-          if (!isset($_POST['category_higher'])) {
-            echo "Missing argument: category_higher";
+          if (!isset($_POST['category']) || $_POST['category'] == "") {
+            echo "Missing argument: category";
             $missing_arguments = true;
           }
-          if (!isset($_POST['category_lower'])) {
-            echo "Missing argument: category_lower";
-            $missing_arguments = true;
-          }
-          if (!isset($_POST['end'])) {
+          if (!isset($_POST['end']) || $_POST['end'] == "") {
             echo "Missing argument: end";
             $missing_arguments = true;
           }
@@ -52,70 +48,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             http_response_code(400);
           } else {
             $nickname = $_POST['nickname'];
-            $category_higher = $_POST['category_higher'];
-            $category_lower = $_POST['category_lower'];
-            $end = $_POST['end'];
+            $category = $_POST['category'];
+            $end = str_replace("T", " ", $_POST['end']);
 
-            echo "end: $end";
+            // echo "nickname: $nickname\n";
+            // echo "category: $category\n";
+            // echo "end: $end\n";
 
-            if ($category_higher == "1" && $category_lower == "2") {
-              $category = 3;
-            } else if ($category_higher == "1") {
+            if ($category == "lower") {
               $category = 1;
-            } else if ($category_lower == "2") {
+            } else if ($category == "higher") {
               $category = 2;
-            } else {
-              echo "Invalid category";
-              http_response_code(400);
+            } else if ($category == "both") {
+              $category = 3;
             }
 
-            $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time) VALUES (:nickname, :category, NOW(), :end)");
-            $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
-            $stmt->bindParam(':category', $category, PDO::PARAM_INT);
-            $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
-            $stmt->execute();
-            // Check if image file is a actual image or fake image
-            if ($_FILES["first-hint-img"]["error"] === 0 && $_FILES["first-hint-img"]["tmp_name"] != "") {
-              $check = getimagesize($_FILES["first-hint-img"]["tmp_name"]);
-              if ($check != false) {
-                $new_round_id = null;
-                $target_dir = "";
-                for ($i = 0; $i < 1000; $i++) {
-                  if (!is_dir("../hints/round$i")) {
-                    if (!file_exists("../hints/round$i")) {
-                      mkdir("../hints/round$i");
-                      $target_dir = "../hints/round$i";
-                      $new_round_id = $i;
-                      break;
+            if ($category != 1 && $category != 2 && $category != 3) {
+              echo "Invalid category";
+              http_response_code(400);
+            } else {
+              // Check if image file is a actual image or fake image
+              if ($_FILES["first-hint-img"]["error"] === 0 && $_FILES["first-hint-img"]["tmp_name"] != "") {
+                $check = getimagesize($_FILES["first-hint-img"]["tmp_name"]);
+                if ($check != false) {
+                  $new_round_id = null;
+                  $target_dir = "";
+
+                  $stmt = $conn->prepare("SELECT id FROM rounds ORDER BY id DESC LIMIT 1");
+                  // $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
+                  $stmt->execute();
+
+                  $new_round_id = 0;
+                  if ($stmt->rowCount() > 0) {
+                    $current_max_round_num = $stmt->fetchColumn();
+                    $new_round_id = $current_max_round_num + 1;
+                  }
+
+                  if (!is_dir("../hints/round$new_round_id")) {
+                    if (!file_exists("../hints/round$new_round_id")) {
+                      mkdir("../hints/round$new_round_id");
+                      $target_dir = "../hints/round$new_round_id";
                     } else {
                       echo "Error: hint dir exists, but isnt a dir";
-                      break;
                     }
                   }
-                }
-                if ($target_dir == "") {
-                  echo "Error: could not find a suitable hints dir";
-                  http_response_code(404);
+
+                  if ($target_dir == "") {
+                    for ($i = 0; $i < 1000; $i++) {
+                      if (!is_dir("../hints/round$i")) {
+                        if (!file_exists("../hints/round$i")) {
+                          mkdir("../hints/round$i");
+                          $target_dir = "../hints/round$i";
+                          $new_round_id = $i;
+                          break;
+                        } else {
+                          echo "Error: hint dir exists, but isnt a dir";
+                          break;
+                        }
+                      }
+                    }
+                  }
+
+                  if ($target_dir == "") {
+                    echo "Error: could not find a suitable hints dir";
+                    http_response_code(404);
+                  } else {
+                    $target_file = $target_dir . basename($_FILES["first-hint-img"]["name"]);
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    $info = pathinfo($_FILES['first-hint-img']['name']);
+                    $basename = $info['basename']; // get the extension of the file
+                    $target = $target_dir . "/" . $basename;
+
+                    move_uploaded_file($_FILES['first-hint-img']['tmp_name'], $target);
+
+                    $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, NOW(), :end, :hint_folder)");
+                    $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
+                    $stmt->bindParam(':category', $category, PDO::PARAM_INT);
+                    $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
+                    $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
+                    $stmt->execute();
+
+                    $stmt = $conn->prepare("SELECT * FROM rounds WHERE (nickname = :nickname AND category = :category AND end_time = :end AND hint_folder = :hint_folder)");
+                    $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
+                    $stmt->bindParam(':category', $category, PDO::PARAM_INT);
+                    $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
+                    $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
+                    $stmt->execute();
+                    
+                    $result = $stmt->fetch();
+                    if ($result !== false) {
+                      // foreach ($result as $key => $value) {
+                      //   echo "$key: $value\n";
+                      // }
+
+                      echo "round.php?round=$new_round_id";
+                      http_response_code(200);
+                    } else {
+                      echo "Round creation failed";
+                      http_response_code(500);
+                    }
+                  }
                 } else {
-                  $target_file = $target_dir . basename($_FILES["first-hint-img"]["name"]);
-                  $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-                  $info = pathinfo($_FILES['first-hint-img']['name']);
-                  $basename = $info['basename']; // get the extension of the file
-                  $target = $target_dir . "/" . $basename;
-
-                  move_uploaded_file($_FILES['first-hint-img']['tmp_name'], $target);
-
-                  echo "round.php?round=$new_round_id";
-                  http_response_code(200);
+                  echo "File upload failed";
+                  http_response_code(500);
                 }
               } else {
-                echo "File upload failed";
+                echo "File not uploaded";
                 http_response_code(500);
               }
-            } else {
-              echo "File not uploaded";
-              http_response_code(500);
             }
           }
         } else {

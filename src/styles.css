@@ -12,11 +12,17 @@ body {
   overflow-x: hidden;
 }
 
+.adminperm {
+  color: red;
+  display: none;
+}
+
 #body,
 #header {
   /* border: 1px solid var(--text); */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  text-align: right;
 }
 
 #body::-webkit-scrollbar,
@@ -85,6 +91,16 @@ body {
   padding: 1vh;
 }
 
+#header:before {
+  background: url("map_logo.png") var(--background) no-repeat bottom center;
+  opacity: 0.2;
+  background-size: contain;
+  content: " ";
+  display: inline-block;
+  position: absolute;
+  z-index: -1;
+}
+
 @media screen and (orientation: landscape) {
   body {
     flex-direction: row;
@@ -96,6 +112,12 @@ body {
   #header {
     width: 30vw;
   }
+  /* #header:before {
+    position: absolute;
+    left: 1vh;
+    width: 30vw;
+    height: 90%;
+  } */
   #body {
     width: 65vw;
   }

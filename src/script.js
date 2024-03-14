@@ -7,24 +7,36 @@ function toggleVisibility(x) {
 }
 
 function loadAccount() {
-  fetch('accountName.php', {
-    method: 'POST',
+  fetch("accountName.php", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
   })
-  .then((r) => {
-    if (r.status != 200) {
-      document.getElementById("account").innerHTML = "<a href='login.php'>Přihlásit se k týmu</a>";
-      return;
-    }
-    r.text().then((txt) => {
-      document.getElementById("account").innerHTML = "Přihlášený tým: " + txt + "<br> <a href='login.php'>Změnit přihlášení</a>";
-      return;
+    .then((r) => {
+      adminperm_styletag = document.getElementById("adminperm_styletag");
+      if (r.status != 200) {
+        document.getElementById("account").innerHTML =
+          "<a href='login.php'>Přihlásit se k týmu</a>";
+        adminperm_styletag.innerHTML = ".adminperm {display: none;}";
+        return;
+      }
+      r.text().then((txt) => {
+        document.getElementById("account").innerHTML =
+          "Přihlášený tým: " +
+          txt +
+          "<br> <a href='login.php'>Změnit přihlášení</a>";
+        if (txt == "admin") {
+          adminperm_styletag.innerHTML = ".adminperm {display: block;}";
+        } else {
+          adminperm_styletag.innerHTML = ".adminperm {display: none;}";
+        }
+        return;
+      });
     })
-  }).catch(function(err) {
-    console.log('Error: ' + err);
-  });
+    .catch(function (err) {
+      console.log("Error: " + err);
+    });
 }
 
 function resizeRoundNicks() {
@@ -39,16 +51,48 @@ function resizeRoundNicks() {
   }
 }
 
-var r = document.querySelector(':root');
+var r = document.querySelector(":root");
 function resizeHeader() {
-  r.style.setProperty('--', 'lightblue');
+  r.style.setProperty("--", "lightblue");
+}
+
+function resizeHeaderBg() {
+  let id = "#header";
+  let header = document.querySelector(id);
+  let headerBg = document.querySelector("#header_styletag");
+
+  headerBg.innerHTML =
+    id +
+    ":before {" +
+    "height: " +
+    header.clientHeight +
+    "px;" +
+    "width: " +
+    header.clientWidth +
+    "px;" +
+    "left: " +
+    header.offsetLeft +
+    "px;" +
+    "top: " +
+    header.offsetTop +
+    "px;" +
+    "}";
+
+  // headerBg.style.height = header.clientHeight + "px";
+  // headerBg.style.width = header.clientWidth + "px";
+  // headerBg.style.left = header.offsetLeft + "px";
+  // headerBg.style.top = header.offsetTop + "px";
 }
 
 function resize() {
   resizeRoundNicks();
   resizeHeader();
+  resizeHeaderBg();
 }
 
 window.onresize = resize();
+addEventListener("resize", (event) => {
+  resize();
+});
 
 loadAccount();

@@ -6,17 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>predmajalesovka</title>
 
-
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="basicstyles.css">
   <script src="script.js" defer></script>
+  <style id="header_styletag"></style>
+  <style id="adminperm_styletag"></style>
 </head>
 
 <body>
   <div id="header">
     <div class="flex flex-row flex-space-between" id="top-bar">
       <h3 id="account"></h3>
-      <img src="logo.png" alt="logo" id="logo">
+      <img src="map_logo.png" alt="logo" id="logo">
     </div>
 
     <h1>Předmajálesová hra</h1>
@@ -27,15 +28,16 @@
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
-    <h3 class="adminperm" style="color: red;" onclick="toggleVisibility(document.getElementById('new-round-form')); document.getElementById('new-round-form').scrollTo()"><u>Přidat kolo</u></h3>
+    <h3 class="adminperm" onclick="toggleVisibility(document.getElementById('new-round-form')); document.getElementById('new-round-form').scrollTo()"><u>Přidat kolo</u></h3>
 
     <form action="add_round.php" method="post" enctype="multipart/form-data" class="adminperm" id="new-round-form">
       <h3>Přidat kolo</h3>
       <input type="text" name="nickname" placeholder="nickname">
       <fieldset>
         <legend>Kategorie:</legend>
-        <input type="checkbox" name="category_higher" value="1"> vyšší
-        <input type="checkbox" name="category_lower" value="2"> nižší
+        <input type="radio" name="category" value="lower">nižší
+        <input type="radio" name="category" value="higher">vyšší
+        <input type="radio" name="category" value="both">obě
       </fieldset>
 
       <label for="new-round-end-time">Deadline:</label>
@@ -72,7 +74,7 @@
               response.text().then((txt) => {
                 console.log(txt);
                 if (confirm("Round created\nDo you want to go to the new round's page?")) {
-                  window.location.href = txt;
+                  window.location.replace(txt);
                 }
               });
             } else {
