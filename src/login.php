@@ -42,7 +42,7 @@
   }
 
   function savePassword() {
-    document.cookie = "password=" + document.getElementById("password").value;
+    document.cookie = "password=" + document.getElementById("password").value + "; expires=01 May 2024 00:00:00 UTC;";
     document.getElementById("password").value = "";
     accountName();
   }

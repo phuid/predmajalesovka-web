@@ -135,15 +135,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
                     $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
                     $stmt->execute();
-                    
+
                     $result = $stmt->fetch();
                     if ($result !== false) {
-                      // foreach ($result as $key => $value) {
-                      //   echo "$key: $value\n";
-                      // }
 
                       echo "round.php?round=$new_round_id";
                       http_response_code(200);
+
+                      $stmt = $conn->prepare("SELECT email FROM emails");
+                      $stmt->execute();
+
+                      $result = $stmt->fetch();
+                      while ($result !== false) {
+                        $to = $result['email'];
+                        $subject = "Nové kolo Předmajálesové hry - $nickname";
+
+                        $mail_body = "<html><style>" + file_get_contents("basicstyles.css") + "</style><body>";
+
+                        $result = $stmt->fetch();
+                      }
                     } else {
                       echo "Round creation failed";
                       http_response_code(500);
