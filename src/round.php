@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $row = $stmt->fetch();
       if ($row === false) {
         echo "<h1>No round with id $round_id found!</h1>";
-        echo "if you are an admin, you can create a new round with id $round_id <a onclick=\"fetch('add_round.php', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'round_id=$round_id'})\">here</a>";
       } else {
         echo "Round number: " . $row['id'] . "<br>";
         echo "Round name: " . $row['nickname'] . "<br>";
@@ -47,44 +46,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kolo</title>
+  <title>Kolo <?php echo $round_id;?></title>
   <link rel="stylesheet" href="basicstyles.css">
+
+  <style>
+    #timer {
+      /* font-size: 1.3rem; */
+      text-shadow: 1px 1px var(--accent-pink), -1px -1px var(--accent-blue);
+    }
+
+    #hint_container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      /* overflow: scroll; */
+      width: 100%;
+    }
+    
+    @media screen and (orientation: portrait) {
+      #hint_container {
+        flex-direction: column;
+      }
+      #hint_container img {
+        width: 100%;
+      }
+    }
+    
+    @media screen and (orientation: landscape) {
+      #hint_container {
+        flex-direction: row;
+        justify-content: left;
+        height: calc(100vh / 3);
+      }
+      #hint_container img {
+        height: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <h1>Předmajálesová hra</h1>
   <h4><a href="index.php">zpět na úvod</a></h4>
-  <h2>Kolo <?php echo $round_id; ?></h2>
+  <?php
+  if ($row === false) {
+    echo "</body></html>";
+    exit();
+  }
+  ?>
+  <h2>Kolo <?php echo $round_id.": \"".$row["nickname"]."\""; ?></h2>
 
   <h3>Čas: </h3>
+  <p>
+    <b>Začátek:</b> <?php echo $row['start_time']; ?><br>
+    <b>Konec:</b> <?php echo $row['end_time']; ?>
+  </p>
   <p id="timer"></p>
 
   <h3>Váš důkaz:</h3>
 
-  <h3>Nápovědy:</h3>
+  <h3>Nápovědy (od nejnovější):</h3>
+
+  <div id="hint_container">
+    <?php
+    if ($row["hint_folder"] != "") {
+      try {
+        $target_dir = $row["hint_folder"];
+
+        $hint_files = scandir($target_dir);
+        if ($hint_files === false) {
+          throw new Exception("scandir failed");
+        }
+
+        usort($hint_files, function ($a, $b) use ($target_dir) {
+          $fileA = $target_dir . '/' . $a;
+          $fileB = $target_dir . '/' . $b;
+          return filemtime($fileB) - filemtime($fileA);
+        });
+
+        foreach ($hint_files as $file) {
+          if ($file != "." && $file != "..") {
+            echo "<img src='$target_dir/$file' onclick='window.location = \"$target_dir/$file\"'>";
+          }
+        }
+      } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+      }
+    }
+    ?>
+  </div>
 
   <script>
     let timer = document.getElementById('timer');
     let countDownDate = new Date("<?php echo $row['end_time']; ?>").getTime();
     let startDate = new Date("<?php echo $row['start_time']; ?>").getTime();
 
-    let x = setInterval(function() {
+    function timeTimer() {
       let now = new Date().getTime();
-      let distance = countDownDate - now;
+      let end_distance = countDownDate - now;
+      let start_distance = now - startDate;
 
-      let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      let end_days = Math.floor(end_distance / (1000 * 60 * 60 * 24));
+      let end_hours = Math.floor((end_distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let end_minutes = Math.floor((end_distance % (1000 * 60 * 60)) / (1000 * 60));
+      let end_seconds = Math.floor((end_distance % (1000 * 60)) / 1000);
 
-      timer.innerHTML = "Zbývající: " + days + "d " + hours + "h " + minutes + "m " + seconds + "s "
-      + "<br>" + "Od startu: " + Math.floor((now - startDate) / 1000) + "s";
+      let start_days = Math.floor(start_distance / (1000 * 60 * 60 * 24));
+      let start_hours = Math.floor((start_distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let start_minutes = Math.floor((start_distance % (1000 * 60 * 60)) / (1000 * 60));
+      let start_seconds = Math.floor((start_distance % (1000 * 60)) / 1000);
 
-      if (distance < 0) {
+      timer.innerHTML = "<b>Zbývající:</b> " + end_days + "d " + end_hours + "h " + end_minutes + "m " + end_seconds + "s" +
+        "<br>" + "<b>Od startu:</b> " + start_days + "d " + start_hours + "h " + start_minutes + "m " + start_seconds + "s";
+
+      if (end_distance < 0) {
         clearInterval(x);
-        timer.innerHTML = "Konec";
+        timer.innerHTML = "Čas pro toto kolo vypršel!";
       }
-    }, 1000);
+    }
+
+    let x = setInterval(timeTimer, 1000);
+    timeTimer();
   </script>
 </body>
 

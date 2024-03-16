@@ -26,7 +26,7 @@
     <li>Na fotce musí být vidět celá nálepka a okolí místa, kde je nalepená.</li>
     <li>Z fotky musí být jasně poznat, že jste na místě byli vy a že nálepka je na místě, kam ji umístili organizátoři.</li>
     <li>Fotka musí být pořízena v době platnosti kola (tj. ne starší než 30. 4. 2024 23:59).</li>
-    <li>Fotka nesmí být upravená (tj. nesmíte na ni přidávat žádné prvky, které tam nejsou, nebo je odebírat).</li>
+    <li>Fotka nesmí být upravená</li>
     <li>Fotka nesmí být z jiného kola, nebo z jiného místa, než je určeno pro dané kolo.</li>
     <li>Fotka nesmí být zveřejněná na internetu předtím, než ji odevzdáte.</li>
   </ul>

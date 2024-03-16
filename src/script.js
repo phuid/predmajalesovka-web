@@ -1,8 +1,8 @@
 function toggleVisibility(x) {
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
+  if (x.style.display === "block") {
     x.style.display = "none";
+  } else {
+    x.style.display = "block";
   }
 }
 
@@ -90,9 +90,45 @@ function resize() {
   resizeHeaderBg();
 }
 
+var roundRows = document.getElementsByClassName("round_row");
+
+function sortRounds(attr, direction) {
+  try {
+    Array.prototype.slice
+      .call(
+        document.querySelectorAll(
+          "#rounds-container .round_row[data-" + attr + "]"
+        )
+      )
+      .sort(function (a, b) {
+        // Add the data attribute in both of these as well
+
+        a = a.getAttribute("data-" + attr);
+        b = b.getAttribute("data-" + attr);
+        return a.localeCompare(b) * (direction == "asc" ? 1 : -1);
+      })
+      .forEach(function (a) {
+        a.parentNode.appendChild(a);
+      });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function filterRounds() {
+  
+}
+
 window.onresize = resize();
 addEventListener("resize", (event) => {
   resize();
 });
 
 loadAccount();
+
+sortRounds(
+  document.getElementById("rounds-order").value,
+  document.getElementById("rounds-order-direction").value
+);
+
+lazyload();

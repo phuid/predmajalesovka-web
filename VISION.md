@@ -1,7 +1,5 @@
 ## todo
-- all pages
-- admin actions on pages
-- store password on prihlaseni page to cookie and just check it when they try to do something
+- email notif categories
 
 ## db
 
@@ -9,8 +7,10 @@
 CREATE TABLE emails (
     id int NOT NULL AUTO_INCREMENT,
     email varchar(255) NOT NULL,
+    category int NOT NULL,
     PRIMARY KEY (id)
 );
+
 CREATE TABLE teams (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
@@ -62,13 +62,12 @@ CREATE TABLE rounds (
 
 ### users
 
-- header - 3D BLUE RED EFFECT Viz https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow
 - email subscribe form
 - google calendar style feed
 
 #### nahravani
 
-- select class - login
+- select team - login
 - check, jestli uz neni nahrany
   - ? "tvoje trida uz dukaz pro toto kolo nahrala, pokud nahrajete nový obrázek, započítá se vám čas nahrání nového obrázku"
   - : "nahrajte obrázek, běží vám čas; čas od začátku kola: hh:mm:ss"

@@ -8,9 +8,11 @@
 
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="basicstyles.css">
-  <script src="script.js" defer></script>
   <style id="header_styletag"></style>
   <style id="adminperm_styletag"></style>
+
+  <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.js"></script>
+  <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -28,7 +30,7 @@
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
-    <h3 class="adminperm" onclick="toggleVisibility(document.getElementById('new-round-form')); document.getElementById('new-round-form').scrollTo()"><u>Přidat kolo</u></h3>
+    <h3 class="adminperm" style="cursor: pointer;" onclick="toggleVisibility(document.getElementById('new-round-form')); document.getElementById('new-round-form').scrollTo()"><u>Přidat kolo</u></h3>
 
     <form action="add_round.php" method="post" enctype="multipart/form-data" class="adminperm" id="new-round-form">
       <h3>Přidat kolo</h3>
@@ -89,27 +91,123 @@
 
   </div>
   <div id="body">
-    <div id="flex-container">
+    <div class="flex flex-row flex-space-between" style="flex-wrap: wrap;">
+      <h2 style="display: inline;">Kola:</h2>
+      <div class="flex flex-row">
+        <label for="rounds-order">Seřadit podle:</label>
+        <select id="rounds-order" onchange="sortRounds(this.value, document.getElementById('rounds-order-direction').value)">
+          <option value="nickname">Název</option>
+          <option selected value="id">Číslo kola</option>
+          <option value="category">Kategorie</option>
+          <option value="start_time">Čas začátku</option>
+          <option value="end_time">Čas konce</option>
+        </select>
+        <select id="rounds-order-direction" onchange="sortRounds(document.getElementById('rounds-order').value, this.value)">
+          <option value="asc">Vzestupně</option>
+          <option selected value="desc">Sestupně</option>
+        </select>
+        <u style="padding-left: 1rem; cursor: pointer;" onclick="toggleVisibility(document.getElementById('filters-container')); filterRounds();">
+          Filtry
+        </u>
+      </div>
+    </div>
+    <div class="flex flex-column" style="align-items: end;">
+      <div id="filters-container" style="display: none">
+        <h3 style="display: inline;">Filtry:</h3>
+        <table>
+
+          <tr>
+            <td>
+              <label for="filter-category">Kategorie:</label>
+            </td>
+            <td>
+              <select id="filter-category" onchange="filterRounds()">
+                <option value="lower">nižší</option>
+                <option value="higher">vyšší</option>
+                <option selected value="both">obě</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="filter-start-time">Čas začátku:</label>
+            </td>
+            <td>
+              <input type="datetime-local" id="filter-start-time" oninput="filterRounds()">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="filter-end-time">Čas konce:</label>
+            </td>
+            <td>
+              <input type="datetime-local" id="filter-end-time" oninput="filterRounds()">
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="rounds-container">
       <?php
-      $rounds_count = 14;
-      for ($i = 0; $i < $rounds_count; $i++) {
-        echo "<div class='round_row'>";
-        echo "<div class='round_nick'><p>15.3. \"ani nahoře, ani dole \"</p></div>";
+      try {
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
 
-        $img_width = rand(9, 20) * 40;
-        $img_height = rand(9, 20) * 40;
-        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+        $conn = new PDO("mysql:host=$servername;dbname=predmajalesova_hra", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $img_width = rand(9, 20) * 40;
-        $img_height = rand(9, 20) * 40;
-        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+        $stmt = $conn->prepare("SELECT * FROM rounds ORDER BY id DESC");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        while ($result !== false) {
+          echo "<div class='round_row";
+          if ($result["end_time"] < date("Y-m-d H:i:s")) {
+            echo " round_expired";
+          }
+          echo "'";
 
-        $img_width = rand(9, 20) * 40;
-        $img_height = rand(9, 20) * 40;
-        echo "<img class='round_img' src='https://picsum.photos/$img_width/$img_height'>";
+          foreach ($result as $key => $value) {
+            echo " data-$key='$value'";
+          }
 
-        echo "</div>";
+          echo " onclick=\"window.location='round.php?round_id=" . $result["id"] . "';\">";
+          echo "<div class='round_nick'><p><b>Kolo " . $result["id"] . ": \"" . $result["nickname"] . "\"</b><br><b>Začátek:</b> " . $result["start_time"] . "<br><b>Konec:</b> " . $result["end_time"] . "</p></div>";
+
+          if ($result["hint_folder"] != "") {
+            try {
+              $target_dir = $result["hint_folder"];
+
+              $hint_files = scandir($target_dir);
+              if ($hint_files === false) {
+                throw new Exception("scandir failed");
+              }
+
+              usort($hint_files, function ($a, $b) use ($target_dir) {
+                $fileA = $target_dir . '/' . $a;
+                $fileB = $target_dir . '/' . $b;
+                return filemtime($fileB) - filemtime($fileA);
+              });
+
+              foreach ($hint_files as $file) {
+                if ($file != "." && $file != "..") {
+                  echo "<img class='round_img lazyload' data-src='$target_dir/$file'>";
+                }
+              }
+            } catch (Exception $e) {
+              echo "Error: " . $e->getMessage();
+            }
+          }
+
+          echo "</div>";
+          $result = $stmt->fetch();
+        }
+      } catch (PDOException $e) {
+        echo "Connection failed: " . $e->getMessage();
       }
+
       ?>
     </div>
   </div>

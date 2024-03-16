@@ -58,6 +58,10 @@ h1 {
   align-items: center;
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
 .flex-space-between {
   justify-content: space-between;
 }
