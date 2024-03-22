@@ -1,5 +1,16 @@
 ## todo
+
 - email notif categories
+- round filtering on index
+- submit proof + delete proof (max 30mins after submit)
+  - deleteproof needs to check whether the proof belongs to password team
+- admin remove hint
+- admin remove round
+
+
+## check
+
+- is it possible to read gps coordinates from round hint photo metadata?
 
 ## db
 
@@ -19,7 +30,7 @@ CREATE TABLE teams (
     PRIMARY KEY (id)
 );
 
--- https://www.random.org/strings/?num=12&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
+-- https://www.random.org/strings/?num=16&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
 INSERT INTO teams (name, password, category) VALUES
 ('admin', 'xxxxxxxxxx', 1),
 ('primaA', 'xxxxxxxxxx', 1),
@@ -33,7 +44,11 @@ INSERT INTO teams (name, password, category) VALUES
 ('kvintaA', 'xxxxxxxxxx', 2),
 ('kvintaB', 'xxxxxxxxxx', 2),
 ('sextaA', 'xxxxxxxxxx', 2),
-('sextaB', 'xxxxxxxxxx', 2);
+('sextaB', 'xxxxxxxxxx', 2),
+('septimaA', 'xxxxxxxxxx', 3),
+('septimaB', 'xxxxxxxxxx', 3),
+('oktavaA', 'xxxxxxxxxx', 3),
+('oktavaB', 'xxxxxxxxxx', 3);
 
 
 CREATE TABLE proofs (

@@ -18,7 +18,7 @@
 <body>
   <div id="header">
     <div class="flex flex-row flex-space-between" id="top-bar">
-      <h3 id="account"></h3>
+      <h3 id="account"><a href="login.php">Přihlásit se</a></h3>
       <img src="map_logo.png" alt="logo" id="logo">
     </div>
 
@@ -83,7 +83,6 @@
               console.log("fail");
               response.text().then(txt => alert("Round create failed, status: " + response.status + "\nmessage: " + txt));
             }
-            response.text().then(txt => console.log(txt));
           }
         ).catch(e => console.log(e));
       }
@@ -113,9 +112,11 @@
     </div>
     <div class="flex flex-column" style="align-items: end;">
       <div id="filters-container" style="display: none">
-        <h3 style="display: inline;">Filtry:</h3>
+        <div class="flex flex-row flex-space-between">
+          <h3 style="display: inline;">Filtry: (coming soon)</h3>
+          <u onclick="toggleVisibility(document.getElementById('filters-container'));">skrýt filtry</u>
+        </div>
         <table>
-
           <tr>
             <td>
               <label for="filter-category">Kategorie:</label>

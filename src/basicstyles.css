@@ -66,6 +66,11 @@ h1 {
   justify-content: space-between;
 }
 
-.adminperm > a {
+.adminperm {
   color: red;
+  display: none;
+}
+
+.adminperm > u {
+  cursor: pointer;
 }

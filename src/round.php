@@ -3,12 +3,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['round_id'])) {
     $round_id = $_GET['round_id'];
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
+    $sql_servername = "localhost";
+    $sql_username = "root";
+    $sql_password = "";
 
     try {
-      $conn = new PDO("mysql:host=$servername;dbname=predmajalesova_hra", $username, $password);
+      $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
       // set the PDO error mode to exception
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -19,21 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $row = $stmt->fetch();
       if ($row === false) {
         echo "<h1>No round with id $round_id found!</h1>";
-      } else {
-        echo "Round number: " . $row['id'] . "<br>";
-        echo "Round name: " . $row['nickname'] . "<br>";
-        echo "Round start: " . $row['start_time'] . "<br>";
-        echo "Round end: " . $row['end_time'] . "<br>";
-        echo "Round hint_folder: " . $row['hint_folder'] . "<br>";
-        echo "Round category: " . $row['category'] . "<br>";
       }
     } catch (PDOException $e) {
       echo "Connection failed: " . $e->getMessage();
+      $row = false;
     }
-
-    $conn = null;
   } else {
-    echo "round field is missing";
+    echo "<h1>round field is missing</h1>";
+    $row = false;
   }
 } else {
   echo "Invalid request method";
@@ -46,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kolo <?php echo $round_id;?></title>
+  <title>Kolo <?php echo $round_id; ?></title>
   <link rel="stylesheet" href="basicstyles.css">
 
   <style>
@@ -63,78 +56,292 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       /* overflow: scroll; */
       width: 100%;
     }
-    
-    @media screen and (orientation: portrait) {
-      #hint_container {
-        flex-direction: column;
-      }
-      #hint_container img {
-        width: 100%;
-      }
+
+    body {
+      display: flex;
     }
-    
+
+    #body,
+    #header {
+      /* border: 1px solid var(--text); */
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+
+    #body::-webkit-scrollbar,
+    #header::-webkit-scrollbar {
+      display: none;
+    }
+
+    #header:before {
+      background: url("map_logo.png") var(--background) no-repeat bottom center;
+      opacity: 0.2;
+      background-size: contain;
+      content: " ";
+      display: inline-block;
+      position: absolute;
+      z-index: -1;
+    }
+
+    #top-bar {
+      height: 5rem;
+    }
+
+    .proof_img {
+      max-width: 95%;
+      max-height: 95%;
+      cursor: zoom-in;
+    }
+
+    #logo {
+      height: 5vh;
+      padding: 1vh;
+    }
+
     @media screen and (orientation: landscape) {
       #hint_container {
         flex-direction: row;
         justify-content: left;
         height: calc(100vh / 3);
       }
+
       #hint_container img {
         height: 100%;
       }
+
+      body {
+        flex-direction: row;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      #body,
+      #header {
+        overflow-y: scroll;
+        height: 100%;
+      }
+
+      #header {
+        width: 30vw;
+      }
+
+      #body {
+        width: 65vw;
+      }
+    }
+
+    @media screen and (orientation: portrait) {
+      #hint_container {
+        flex-direction: column;
+      }
+
+      #hint_container img {
+        width: 100%;
+      }
+
+      body {
+        flex-direction: column;
+        overflow-y: scroll;
+      }
     }
   </style>
+  <style id="header_styletag"></style>
+  <style id="adminperm_styletag"></style>
 </head>
 
 <body>
-  <h1>Předmajálesová hra</h1>
-  <h4><a href="index.php">zpět na úvod</a></h4>
-  <?php
-  if ($row === false) {
-    echo "</body></html>";
-    exit();
-  }
-  ?>
-  <h2>Kolo <?php echo $round_id.": \"".$row["nickname"]."\""; ?></h2>
+  <div id="header">
+    <div class="flex flex-row flex-space-between" id="top-bar">
+      <h3 id="account"><a href="login.php">Přihlásit se</a></h3>
+      <img src="map_logo.png" alt="logo" id="logo">
+    </div>
 
-  <h3>Čas: </h3>
-  <p>
-    <b>Začátek:</b> <?php echo $row['start_time']; ?><br>
-    <b>Konec:</b> <?php echo $row['end_time']; ?>
-  </p>
-  <p id="timer"></p>
-
-  <h3>Váš důkaz:</h3>
-
-  <h3>Nápovědy (od nejnovější):</h3>
-
-  <div id="hint_container">
+    <h1>Předmajálesová hra</h1>
+    <h4><a href="index.php">zpět na úvod</a></h4>
     <?php
-    if ($row["hint_folder"] != "") {
-      try {
-        $target_dir = $row["hint_folder"];
-
-        $hint_files = scandir($target_dir);
-        if ($hint_files === false) {
-          throw new Exception("scandir failed");
-        }
-
-        usort($hint_files, function ($a, $b) use ($target_dir) {
-          $fileA = $target_dir . '/' . $a;
-          $fileB = $target_dir . '/' . $b;
-          return filemtime($fileB) - filemtime($fileA);
-        });
-
-        foreach ($hint_files as $file) {
-          if ($file != "." && $file != "..") {
-            echo "<img src='$target_dir/$file' onclick='window.location = \"$target_dir/$file\"'>";
-          }
-        }
-      } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-      }
+    if ($row === false) {
+      echo "</body></html>";
+      exit();
     }
     ?>
+    <h2>Kolo <?php echo $round_id . ": \"" . $row["nickname"] . "\""; ?></h2>
+
+    <h3 style="display: inline;">Kategorie: </h3> <?php echo (($row['category'] == 3) ? "obě" : (($row['category'] == 1) ? "nižší" : (($row['category'] == 2) ? "vyšší" : "Nepodařilo se načíst kategorii (value:" . $row['category'] . ")"))); ?>
+
+    <h3>Čas: </h3>
+    <p>
+      <b>Začátek:</b> <?php echo $row['start_time']; ?><br>
+      <b>Konec:</b> <?php echo $row['end_time']; ?>
+    </p>
+    <p id="timer"></p>
+
+    <h3 class="adminperm"><u>add hint</u></h3>
+
+    <h3>Váš důkaz:</h3>
+    <?php
+    $cookie_password = $_COOKIE['password'];
+    // Assuming you have established a database connection
+    $stmt = $conn->prepare("SELECT * FROM teams WHERE password = :password");
+    $stmt->bindParam(':password', $cookie_password, PDO::PARAM_STR, 255);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
+    if ($result !== false) {
+      $team_id = $result['id'];
+      $team_name = $result['name'];
+      $team_category = $result['category'];
+
+      if ($team_name == "admin") {
+        $stmt = $conn->prepare("SELECT * FROM proofs WHERE round_id = :roundId");
+      } else {
+        // Prepare the SQL query
+        $stmt = $conn->prepare("SELECT * FROM proofs WHERE team_id = :teamId AND round_id = :roundId");
+        $stmt->bindParam(':teamId', $team_id);
+      }
+      $stmt->bindParam(':roundId', $round_id);
+
+      // Execute the query
+      $stmt->execute();
+
+      $result = $stmt->fetch();
+      while ($result != false) {
+        echo "<div id='proof-" . $result['id'] . "'>";
+        echo "<img class=\"proof_img\" onclick=\"window.location='" . $result['img_url'] . "'\" src='" . $result['img_url'] . "'";
+        if ($result['deleted'] == 1) {
+          echo " style='display: none;'";
+        }
+        echo "><br>";
+        echo "Čas nahrání: " . $result['time'] . "<br>";
+        echo "Ověřeno adminem: <a class='adminverify-txt'>" . (($result['verified'] == 1) ? "ano" : "ne") . "</a>";
+        echo "<button class='adminperm' onclick=\"verifyProof(" . $result['id'] . ")\">Ověřit / Zrušit ověření</button>";
+        echo "<br><button onclick=\"deleteProof(" . $result['id'] . ")\">Smazat</button>";
+        echo "</div><hr>";
+        $result = $stmt->fetch();
+      }
+    }
+
+    ?>
+    <form action="add_proof.php" method="post" enctype="multipart/form-data" id="new-proof-form">
+
+      <input type="file" name="img" id="img">
+
+      <input type="button" value="Nahrát" onclick="sendData()">
+    </form>
+
+    <script>
+      function sendData(data) {
+        // Construct a FormData instance
+        const myform = document.getElementById('new-proof-form');
+        const formData = new FormData(myform);
+
+        formData.append("round_id", <?php echo $round_id; ?>);
+
+        // let password = document.cookie.replace(/(?:(?:^|.*;\s*)password\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        // console.log(password);
+        // formData.append("password", password);
+
+        fetch("add_proof.php", {
+          method: "POST",
+          // Set the FormData instance as the request body
+          body: formData,
+        }).then(
+          (response) => {
+            if (response.status === 200) {
+              console.log("success");
+              myform.reset();
+              // setTimeout(() => location.reload(), 1000);
+              response.text().then((txt) => {
+                console.log(txt);
+                alert("Důkaz úspěšně nahrán, děkujeme!");
+                location.reload();
+              });
+            } else {
+              console.log("fail");
+              response.text().then(txt => alert("Nahrání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
+            }
+          }
+        ).catch(e => console.log(e));
+      }
+
+      function verifyProof(id) {
+        // Send GET request to verify_proof.php with id as argument
+        fetch(`alter_proof.php?id=${id}&action=verifie`, {
+          method: "GET"
+        }).then(
+          (response) => {
+            if (response.status === 200) {
+              response.text().then((txt) => {
+                document.getElementById(`proof-${id}`).getElementsByClassName("adminverify-txt")[0].innerText = (Number(txt.substring(txt.indexOf("=") + 1)) == 1) ? "ano" : "ne";
+              });
+              // Handle successful verification
+            } else {
+              response.text().then(txt => alert("Nahrání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
+              // Handle verification failure
+            }
+          }
+        ).catch(e => console.log(e));
+      }
+
+      function deleteProof(id) {
+        if (confirm("Opravdu chcete smazat tento důkaz?")) {
+          fetch(`alter_proof.php?id=${id}&action=delete`, {
+            method: "GET"
+          }).then(
+            (response) => {
+              if (response.status === 200) {
+                alert("deletion successful");
+                response.text().then((txt) => {
+                  document.getElementById(`proof-${id}`).style.display = "none";
+                });
+                // Handle successful verification
+              } else {
+                response.text().then(txt => alert("Nahrání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
+                // Handle verification failure
+              }
+            }
+          ).catch(e => console.log(e));
+        }
+      }
+    </script>
+  </div>
+
+  <div id="body">
+
+    <h3>Nápovědy (od nejnovější):</h3>
+
+    <div id="hint_container">
+      <?php
+      if ($row["hint_folder"] != "") {
+        try {
+          $target_dir = $row["hint_folder"];
+
+          $hint_files = scandir($target_dir);
+          if ($hint_files === false) {
+            throw new Exception("scandir failed");
+          }
+
+          usort($hint_files, function ($a, $b) use ($target_dir) {
+            $fileA = $target_dir . '/' . $a;
+            $fileB = $target_dir . '/' . $b;
+            return filemtime($fileB) - filemtime($fileA);
+          });
+
+          foreach ($hint_files as $file) {
+            if ($file != "." && $file != "..") {
+              echo "<img style='cursor: zoom-in;' src='$target_dir/$file' onclick='window.location = \"$target_dir/$file\"'>";
+            }
+          }
+        } catch (Exception $e) {
+          echo "Error: " . $e->getMessage();
+        }
+      }
+      ?>
+    </div>
   </div>
 
   <script>
@@ -167,8 +374,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     let x = setInterval(timeTimer, 1000);
+
+    function resizeHeaderBg() {
+      let id = "#header";
+      let header = document.querySelector(id);
+      let headerBg = document.querySelector("#header_styletag");
+
+      headerBg.innerHTML =
+        id +
+        ":before {" +
+        "height: " +
+        header.clientHeight +
+        "px;" +
+        "width: " +
+        header.clientWidth +
+        "px;" +
+        "left: " +
+        header.offsetLeft +
+        "px;" +
+        "top: " +
+        header.offsetTop +
+        "px;" +
+        "}";
+
+      // headerBg.style.height = header.clientHeight + "px";
+      // headerBg.style.width = header.clientWidth + "px";
+      // headerBg.style.left = header.offsetLeft + "px";
+      // headerBg.style.top = header.offsetTop + "px";
+    }
+
+    window.onresize = resizeHeaderBg();
+    addEventListener("resize", (event) => {
+      resizeHeaderBg();
+    });
+
+    function loadAccount() {
+      fetch("accountName.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+        .then((r) => {
+          adminperm_styletag = document.getElementById("adminperm_styletag");
+          if (r.status != 200) {
+            document.getElementById("account").innerHTML =
+              "<a href='login.php'>Přihlásit se k týmu</a>";
+            adminperm_styletag.innerHTML = ".adminperm {display: none;}";
+            return;
+          }
+          r.text().then((txt) => {
+            document.getElementById("account").innerHTML =
+              "Přihlášený tým: " +
+              txt +
+              "<br> <a href='login.php'>Změnit přihlášení</a>";
+            if (txt == "admin") {
+              adminperm_styletag.innerHTML = ".adminperm {display: block;}";
+            } else {
+              adminperm_styletag.innerHTML = ".adminperm {display: none;}";
+            }
+            return;
+          });
+        })
+        .catch(function(err) {
+          console.log("Error: " + err);
+        });
+    }
+
     timeTimer();
+    resizeHeaderBg();
+    loadAccount();
   </script>
+  <?php
+  $conn = null;
+  ?>
 </body>
 
 </html>

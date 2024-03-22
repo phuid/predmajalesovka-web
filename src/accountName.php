@@ -4,12 +4,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cookie_password = $_COOKIE['password'];
     $cookie_password = preg_replace('/[^0-9A-Za-z]/', '', $cookie_password);
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
+    $sql_servername = "localhost";
+    $sql_username = "root";
+    $sql_password = "";
 
     try {
-      $conn = new PDO("mysql:host=$servername;dbname=predmajalesova_hra", $username, $password);
+      $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
       // set the PDO error mode to exception
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

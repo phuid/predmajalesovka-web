@@ -7,12 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // ...
     echo "Email received: " . $email . "<br>";
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
+    $sql_servername = "localhost";
+    $sql_username = "root";
+    $sql_password = "";
 
     try {
-      $conn = new PDO("mysql:host=$servername;dbname=predmajalesova_hra", $username, $password);
+      $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
       // set the PDO error mode to exception
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       

@@ -17,9 +17,9 @@ body {
   display: none;
 }
 
-#header {
+/* #header {
   text-align: right;
-}
+} */
 
 #body,
 #header {
@@ -50,10 +50,6 @@ body {
   display: none;
 }
 
-#top-bar {
-  height: 5rem;
-}
-
 .round_row {
   display: flex;
   flex-direction: row;
@@ -62,6 +58,7 @@ body {
   margin: 0.2rem;
   padding: 0.2rem;
   height: var(--round-row-height);
+  cursor: pointer;
 }
 
 .round_nick {
