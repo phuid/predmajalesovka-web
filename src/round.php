@@ -180,7 +180,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     </p>
     <p id="timer"></p>
 
-    <h3 class="adminperm"><u>add hint</u></h3>
+    <h3 class="adminperm"><u onclick="toggleVisibility(document.getElementById('add-hint-form'))">add hint</u></h3>
+
+    <form class="adminperm" style="display: none;" id="add-hint-form">
+      <input type="file" name="new-hint-img" id="new-hint-img">
+      <input type="button" value="Nahrát" onclick="addHint()">
+    </form>
+
+    <script>
+      function toggleVisibility(x) {
+        if (x.style.display === "block") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "block";
+        }
+      }
+
+      function addHint() {
+        const myform = document.getElementById('add-hint-form');
+        const formData = new FormData(myform);
+
+        formData.append("round_id", <?php echo $round_id; ?>);
+
+        fetch("add_hint.php", {
+          method: "POST",
+          body: formData,
+        }).then(
+          (response) => {
+            if (response.status === 200) {
+              console.log("success");
+              myform.reset();
+              response.text().then((txt) => {
+                console.log(txt);
+                alert("Nápověda úspěšně nahrána, děkujeme!");
+                location.reload();
+              });
+            } else {
+              console.log("fail");
+              response.text().then(txt => alert("Nahrání nápovědy selhalo, status: " + response.status + "\nmessage: " + txt));
+            }
+          }
+        ).catch(e => console.log(e));
+      }
+    </script>
+
+    <h3 class="adminperm"><u onclick="toggleVisibility(document.getElementById('edit-round-form'))">edit round</u></h3>
+    <form id="edit-round-form" style="display: none; border: 1px solid red;">
+      <label for="nickname">Nickname:</label>
+      <input type="text" name="nickname" id="nickname" placeholder="nickname" value="<?php echo $row['nickname'] ?>">
+      <br>
+      <label for="new-round-end-time">start_time:</label>
+      <input type="datetime-local" name="start" id="start_time" value="<?php echo $row['start_time'] ?>">
+      <br>
+      <label for="new-round-end-time">Deadline:</label>
+      <input type="datetime-local" name="end" id="end_time" value="<?php echo $row['end_time'] ?>">
+      
+      <fieldset>
+        <legend>Kategorie:</legend>
+        <input type="radio" name="category" value="lower" <?php if ($row['category'] == 1) {echo "checked";}?>>nižší
+        <input type="radio" name="category" value="higher" <?php if ($row['category'] == 2) {echo "checked";}?>>vyšší
+        <input type="radio" name="category" value="both" <?php if ($row['category'] == 3) {echo "checked";}?>>obě
+      </fieldset>
+      <input type="button" value="Upravit" onclick="editRound()">
+    </form>
+    <script>
+      function editRound() {
+        const myform = document.getElementById('edit-round-form');
+        const formData = new FormData(myform);
+
+        formData.append("edit", true);
+        formData.append("round_id", <?php echo $round_id; ?>);
+
+        fetch("add_round.php", {
+          method: "POST",
+          body: formData,
+        }).then(
+          (response) => {
+            if (response.status === 200) {
+              console.log("success");
+              myform.reset();
+              response.text().then((txt) => {
+                console.log(txt);
+                alert("Kolo úspěšně upraveno, děkujeme!");
+                location.reload();
+              });
+            } else {
+              console.log("fail");
+              response.text().then(txt => alert("Úprava kola selhala, status: " + response.status + "\nmessage: " + txt));
+            }
+          }
+        ).catch(e => console.log(e));
+      }
+    </script>
 
     <h3>Váš důkaz:</h3>
     <?php
@@ -210,17 +301,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       $result = $stmt->fetch();
       while ($result != false) {
-        echo "<div id='proof-" . $result['id'] . "'>";
-        echo "<img class=\"proof_img\" onclick=\"window.location='" . $result['img_url'] . "'\" src='" . $result['img_url'] . "'";
+
+        $team_stmt = $conn->prepare("SELECT * FROM teams WHERE id = :teamId");
+        $team_stmt->bindParam(':teamId', $result['team_id']);
+        $team_stmt->execute();
+        $proof_team = $team_stmt->fetch();
+
+        echo "<div";
         if ($result['deleted'] == 1) {
           echo " style='display: none;'";
         }
-        echo "><br>";
+        echo " id='proof-" . $result['id'] . "'>";
+        echo "<img class=\"proof_img\" onclick=\"window.location='" . $result['img_url'] . "'\" src='" . $result['img_url'] . "'><br>";
         echo "Čas nahrání: " . $result['time'] . "<br>";
-        echo "Ověřeno adminem: <a class='adminverify-txt'>" . (($result['verified'] == 1) ? "ano" : "ne") . "</a>";
+        echo "Tým: " . $proof_team['name'] . "<br>";
+        echo "Ověřeno adminem: <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a>";
         echo "<button class='adminperm' onclick=\"verifyProof(" . $result['id'] . ")\">Ověřit / Zrušit ověření</button>";
         echo "<br><button onclick=\"deleteProof(" . $result['id'] . ")\">Smazat</button>";
-        echo "</div><hr>";
+        echo "<hr></div>";
         $result = $stmt->fetch();
       }
     }
@@ -276,11 +374,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
           (response) => {
             if (response.status === 200) {
               response.text().then((txt) => {
-                document.getElementById(`proof-${id}`).getElementsByClassName("adminverify-txt")[0].innerText = (Number(txt.substring(txt.indexOf("=") + 1)) == 1) ? "ano" : "ne";
+                document.getElementById(`proof-${id}`).getElementsByClassName("adminverify-txt")[0].innerText = (Number(txt.substring(txt.indexOf("=") + 1)) == 1) ? "ano" : "zamítnuto";
               });
               // Handle successful verification
             } else {
-              response.text().then(txt => alert("Nahrání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
+              response.text().then(txt => alert("Verifikace důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
               // Handle verification failure
             }
           }
@@ -300,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 });
                 // Handle successful verification
               } else {
-                response.text().then(txt => alert("Nahrání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
+                response.text().then(txt => alert("Smazání důkazu selhalo, status: " + response.status + "\nmessage: " + txt));
                 // Handle verification failure
               }
             }
