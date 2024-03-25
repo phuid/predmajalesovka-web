@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $proof = $stmt->fetch();
         if ($proof !== false && ($proof['team_id'] == $team_id || $team_name == "admin")) {
           $action = $_GET['action'] . "d";
-          if ($action == "verified" || $action == "deleted") {
+          if (($action == "verified" && $team_name == "admin") || $action == "deleted") {
             $value = 1;
             if ($proof[$action] == 1) {
               $value = 0;
@@ -62,6 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
               echo "Failed to update proof, check failed";
               http_response_code(500);
             }
+          } else if ($action == "verified") {
+            echo "Unauthorized action - only admin can verify proof";
+            http_response_code(400);
           } else {
             echo "Invalid action";
             http_response_code(400);

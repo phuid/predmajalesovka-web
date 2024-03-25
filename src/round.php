@@ -234,12 +234,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       <br>
       <label for="new-round-end-time">Deadline:</label>
       <input type="datetime-local" name="end" id="end_time" value="<?php echo $row['end_time'] ?>">
-      
+
       <fieldset>
         <legend>Kategorie:</legend>
-        <input type="radio" name="category" value="lower" <?php if ($row['category'] == 1) {echo "checked";}?>>nižší
-        <input type="radio" name="category" value="higher" <?php if ($row['category'] == 2) {echo "checked";}?>>vyšší
-        <input type="radio" name="category" value="both" <?php if ($row['category'] == 3) {echo "checked";}?>>obě
+        <input type="radio" name="category" value="lower" <?php if ($row['category'] == 1) {
+                                                            echo "checked";
+                                                          } ?>>nižší
+        <input type="radio" name="category" value="higher" <?php if ($row['category'] == 2) {
+                                                              echo "checked";
+                                                            } ?>>vyšší
+        <input type="radio" name="category" value="both" <?php if ($row['category'] == 3) {
+                                                            echo "checked";
+                                                          } ?>>obě
       </fieldset>
       <input type="button" value="Upravit" onclick="editRound()">
     </form>
@@ -440,6 +446,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       }
       ?>
     </div>
+    <h3>Výsledky:</h3>
+    <div id="results-container">
+      <?php
+      $stmt = $conn->prepare("SELECT * FROM proofs WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
+      $stmt->bindParam(':roundId', $round_id);
+      $stmt->execute();
+      $result = $stmt->fetch();
+
+      echo "<table> <tr> <th> Pořadí </th> <th> Tým </th> <th> Čas </th> <th> Ověřeno adminem </th> </tr>";
+      $i = 1;
+      while ($result != false) {
+        $team_stmt = $conn->prepare("SELECT * FROM teams WHERE id = :teamId");
+        $team_stmt->bindParam(':teamId', $result['team_id']);
+        $team_stmt->execute();
+        $proof_team = $team_stmt->fetch();
+
+        echo "<tr> <td> $i. </td> <td> " . $proof_team['name'] . " </td> <td> " . (new DateTime($row['start_time']))->diff(new DateTime($result['time']))->format("%dd %hh %im %ss") . " </td> <td> <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a> </td> </tr>";
+        // echo "Tým: " . $proof_team['name'] . "<br>";
+        // echo "Čas nahrání: " . $result['time'] . "<br>";
+        // echo "Ověřeno adminem: <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a>";
+        // echo "<button class='adminperm' onclick=\"verifyProof(" . $result['id'] . ")\">Ověřit / Zrušit ověření</button>";
+        // echo "<br><button onclick=\"deleteProof(" . $result['id'] . ")\">Smazat</button>";
+        $result = $stmt->fetch();
+        $i++;
+      }
+      echo "</table>";
+      ?>
+    </div>
+
   </div>
 
   <script>

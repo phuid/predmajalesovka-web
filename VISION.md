@@ -3,7 +3,6 @@
 - email notif categories
 - round filtering on index
 - submit proof + delete proof (max 30mins after submit)
-  - deleteproof needs to check whether the proof belongs to password team
 - admin remove hint
 - admin remove round
 
@@ -55,7 +54,7 @@ CREATE TABLE proofs (
     id int NOT NULL AUTO_INCREMENT,
     round_id int NOT NULL,
     team_id int NOT NULL,
-    time TIMESTAMP NOT NULL,
+    time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     img_url varchar(255) NOT NULL,
     verified boolean,
     deleted boolean DEFAULT false,
@@ -66,7 +65,7 @@ CREATE TABLE rounds (
     id int NOT NULL AUTO_INCREMENT,
     nickname varchar(255) NOT NULL,
     category int NOT NULL,
-    start_time TIMESTAMP NOT NULL,
+    start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_time TIMESTAMP DEFAULT '2024-05-01 00:00:00',
     hint_folder varchar(255) NOT NULL,
     PRIMARY KEY (id)
