@@ -26,7 +26,7 @@
 
     <h3><a href="email_registration.php">Registrace emailových notifikací o nových nápovědách</a></h3>
 
-    <h3><a href="results.php">Průběžné výsledky</a></h3>
+    <h3><a href="results.php">Výsledky</a></h3>
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
