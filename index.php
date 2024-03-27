@@ -163,6 +163,9 @@
         $stmt = $conn->prepare("SELECT * FROM rounds ORDER BY id DESC");
         $stmt->execute();
         $result = $stmt->fetch();
+        if ($result === false) {
+          echo "<div class='round_row'><p>Žádná kola zatím nebyla vytvořena, zkuste to zítra</p></div>";
+        }
         while ($result !== false) {
           echo "<div class='round_row";
           if ($result["end_time"] < date("Y-m-d H:i:s")) {

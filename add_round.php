@@ -46,7 +46,7 @@
             if ((isset($_POST['edit']) && $_POST['edit'] == "true" && isset($_POST['round_id'])) && !isset($_POST['start'])) {
               echo "Missing argument: start";
               $missing_arguments = true;
-            } else {
+            } else if (isset($_POST['start'])) {
               $start = $_POST['start'];
             }
 
@@ -107,10 +107,10 @@
                         $new_round_id = $current_max_round_num + 1;
                       }
 
-                      if (!is_dir("../hints/round$new_round_id")) {
-                        if (!file_exists("../hints/round$new_round_id")) {
-                          mkdir("../hints/round$new_round_id");
-                          $target_dir = "../hints/round$new_round_id";
+                      if (!is_dir("./hints/round$new_round_id")) {
+                        if (!file_exists("./hints/round$new_round_id")) {
+                          mkdir("./hints/round$new_round_id");
+                          $target_dir = "./hints/round$new_round_id";
                         } else {
                           echo "Error: hint dir exists, but isnt a dir";
                         }
@@ -118,10 +118,10 @@
 
                       if ($target_dir == "") {
                         for ($i = 0; $i < 1000; $i++) {
-                          if (!is_dir("../hints/round$i")) {
-                            if (!file_exists("../hints/round$i")) {
-                              mkdir("../hints/round$i");
-                              $target_dir = "../hints/round$i";
+                          if (!is_dir("./hints/round$i")) {
+                            if (!file_exists("./hints/round$i")) {
+                              mkdir("./hints/round$i");
+                              $target_dir = "./hints/round$i";
                               $new_round_id = $i;
                               break;
                             } else {
@@ -174,12 +174,11 @@
 
                         move_uploaded_file($_FILES['first-hint-img']['tmp_name'], $target);
 
-                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, :time, :end, :hint_folder)");
+                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, NOW(), :end, :hint_folder)");
                         $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
                         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
                         $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
                         $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
-                        $stmt->bindParam(':time', date("Y-m-d H:i:s"), PDO::PARAM_STR, 255);
                         $stmt->execute();
                       }
 
@@ -222,7 +221,7 @@
                           }
                         }
 
-                        echo "round.php?round=$new_round_id";
+                        echo "round.php?round_id=$new_round_id";
                         http_response_code(200);
                       } else {
                         echo "Round creation failed";

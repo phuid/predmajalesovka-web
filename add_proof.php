@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               if ($_FILES["img"]["error"] === 0 && $_FILES["img"]["tmp_name"] != "") {
                 $check = getimagesize($_FILES["img"]["tmp_name"]);
                 if ($check != false) {
-                  $target_dir = "../proofs/round$round_id";
+                  $target_dir = "./proofs/round$round_id";
 
                   if (!is_dir($target_dir)) {
                     if (!file_exists($target_dir)) {
