@@ -14,13 +14,15 @@
 ## db
 
 ```sql
+CREATE DATABASE predmajalesova_hra;
+USE predmajalesova_hra;
+
 CREATE TABLE emails (
     id int NOT NULL AUTO_INCREMENT,
     email varchar(255) NOT NULL,
     category int NOT NULL,
     PRIMARY KEY (id)
 );
-
 CREATE TABLE teams (
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255) NOT NULL,
@@ -29,9 +31,9 @@ CREATE TABLE teams (
     PRIMARY KEY (id)
 );
 
--- https://www.random.org/strings/?num=16&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
+-- https://www.random.org/strings/?num=12&len=10&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new
 INSERT INTO teams (name, password, category) VALUES
-('admin', 'xxxxxxxxxx', 1),
+('admin', 'xxxxxxxxxx', 0),
 ('primaA', 'xxxxxxxxxx', 1),
 ('primaB', 'xxxxxxxxxx', 1),
 ('sekundaA', 'xxxxxxxxxx', 1),
