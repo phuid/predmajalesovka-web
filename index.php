@@ -152,11 +152,13 @@
     <div id="rounds-container">
       <?php
       try {
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
+        $config = parse_ini_file('config.ini');
 
-        $conn = new PDO("mysql:host=$servername;dbname=predmajalesova_hra", $username, $password);
+        $sql_servername = $config['sql_servername'];
+        $sql_username = $config['sql_username'];
+        $sql_password = $config['sql_password'];
+
+        $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

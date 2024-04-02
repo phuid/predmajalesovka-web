@@ -3,9 +3,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['round_id'])) {
     $round_id = $_GET['round_id'];
 
-    $sql_servername = "localhost";
-    $sql_username = "root";
-    $sql_password = "";
+    $config = parse_ini_file('config.ini');
+
+    $sql_servername = $config['sql_servername'];
+    $sql_username = $config['sql_username'];
+    $sql_password = $config['sql_password'];
 
     try {
       $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
