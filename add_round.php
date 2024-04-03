@@ -4,7 +4,7 @@
       $cookie_password = $_COOKIE['password'];
       $cookie_password = preg_replace('/[^0-9A-Za-z]/', '', $cookie_password);
 
-    $config = parse_ini_file('config.ini');
+      $config = parse_ini_file('config.ini');
 
       $sql_servername = $config['sql_servername'];
       $sql_username = $config['sql_username'];
@@ -203,31 +203,33 @@
                             return filemtime($fileA) - filemtime($fileB);
                           });
 
-                          $stmt = $conn->prepare("SELECT email FROM emails");
+                          $stmt = $conn->prepare("SELECT * FROM emails");
                           $stmt->execute();
 
                           $result = $stmt->fetch();
                           while ($result !== false) {
-                            $to = $result['email'];
-                            $subject = "Nové kolo Předmajálesové hry - $nickname";
+                            if ($result['category'] == 3 || $category == 3 || $result['category'] == $category) {
+                              $to = $result['email'];
+                              $subject = "Nové kolo Předmajálesové hry - $nickname";
 
-                            $mail_body = "<!DOCTYPE html><html lang='en' style='font-family: Verdana, sans-serif; background: hsl(192, 15%, 10%); color: white;'><body style='font-family: Verdana, sans-serif; background: hsl(192, 15%, 10%); color: white;'>  <h1 style='text-shadow: 2px 1px hsl(302, 100%, 66%), -2px -1px hsl(182, 98%, 23%); font-size: 3rem;'>Nové kolo předmajálesové hry se jmenuje $nickname</h1>  <h3>Stačí najít místo na obrázku, navštívit ho a vyfotit samolepku s logem majálesu do $end. To přece zvládne každý!!!  </h3>  <h3>Podrobnosti: <a href='https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id</a>  </h3>  <h3>PoZnávÁte tOTo MÍSto???????:</h3>";
-                            foreach ($hint_files as $file) {
-                              $mail_body .= "<img src='https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>https://majales.gyrec.cz/predmajalesovka/hints/$target_dir/$file'>";
+                              $mail_body = "<!DOCTYPE html><html lang='en' style='font-family: Verdana, sans-serif; background: hsl(192, 15%, 10%); color: white;'><body style='font-family: Verdana, sans-serif; background: hsl(192, 15%, 10%); color: white;'>  <h1 style='text-shadow: 2px 1px hsl(302, 100%, 66%), -2px -1px hsl(182, 98%, 23%); font-size: 3rem;'>Nové kolo předmajálesové hry se jmenuje $nickname</h1>  <h3>Stačí najít místo na obrázku, navštívit ho a vyfotit samolepku s logem majálesu do $end. To přece zvládne každý!!!  </h3>  <h3>Podrobnosti: <a href='https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id</a>  </h3>  <h3>PoZnávÁte tOTo MÍSto???????:</h3>";
+                              foreach ($hint_files as $file) {
+                                $mail_body .= "<img src='https://majales.gyrec.cz/predmajalesovka/round.php?round=$new_round_id' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>https://majales.gyrec.cz/predmajalesovka/hints/$target_dir/$file'>";
+                              }
+                              $mail_body .= "<h5>Pokud chcete odhlásit příjem těchto emailů, klikněte <a href='https://majales.gyrec.cz/predmajalesovka/remove_email.php?email=$to' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>sem</a></h5></body></html>";
+
+                              mail($to, "Nové kolo předmajálesovky se jmenuje $nickname", $mail_body);
+
+                              $result = $stmt->fetch();
                             }
-                            $mail_body .= "<h5>Pokud chcete odhlásit příjem těchto emailů, klikněte <a href='https://majales.gyrec.cz/predmajalesovka/remove_email.php?email=$to' style='transition: text-shadow 0.1s ease; color: hsl(179, 100%, 50%);'>sem</a></h5></body></html>";
-
-                            mail($to, "Nové kolo předmajálesovky se jmenuje $nickname", $mail_body);
-
-                            $result = $stmt->fetch();
                           }
-                        }
 
-                        echo "round.php?round_id=$new_round_id";
-                        http_response_code(200);
-                      } else {
-                        echo "Round creation failed";
-                        http_response_code(500);
+                          echo "round.php?round_id=$new_round_id";
+                          http_response_code(200);
+                        } else {
+                          echo "Round creation failed";
+                          http_response_code(500);
+                        }
                       }
                     }
                   } else {

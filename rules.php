@@ -35,7 +35,7 @@
   <h3>Jak fotku odevzdat</h3>
   Důkazovou fotku můžete nahrát do formuláře na stránce kola, ke kterému důkaz náleží.
   Na stránky jednotlivých kol, kde jsou vidět nápovědy v plném rozlišení se dostanete kliknutím na příslušnou řadu fotek na <a href="index.php">úvodní stránce</a>.
-  Tento formulář je dostupný pouze ze zařízení (může jich být víc), na kterých jste se v minulosti přihlásily k účtu třídního týmu (viz <a href="#prihlaseni">níže</a>).
+  Tento formulář je dostupný pouze ze zařízení (může jich být víc), na kterých jste se v minulosti přihlásili k účtu třídního týmu (viz <a href="#prihlaseni">níže</a>).
 
 
   <div id="prihlaseni">

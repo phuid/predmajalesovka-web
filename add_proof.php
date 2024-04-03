@@ -113,9 +113,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       $stmt->bindParam(':img_url', $target, PDO::PARAM_INT);
                       $stmt->execute();
 
-                      $result = $stmt->fetch();
+                      $result = $stmt->fetchAll();
                       if ($result !== false) {
                         echo "Proof created";
+
+                        
+
                         foreach ($result as $key => $value) {
                           echo " data-$key='$value'";
                         }
