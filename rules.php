@@ -19,7 +19,7 @@
     <li>Soutěž jsou rozděleny do dvou kategorií: 1. - 3. ročník a 4. - 6. ročník => je 6 tříd v každé kategorii; Některá kola nálěží pouze jedné z kategorií, některá oběma.</li>
     <li>Body jsou udělovány dle pořadí následovně: 1. místo 100 bodů, 2. místo 70 bodů, 3. místo 50 bodů, 4. místo 40 bodů, 5. místo 30 bodů, 6. místo 20 bodů. Body se mezi koly sčítají.</li>
     <li>Některá kola mohou mít časový limit, po jehož uplynutí nebude možné odevzdat důkaz o nalezení místa (fotku). Ostatní kola končí 30. 4. 2024 v 23:59.</li>
-    <li style="color:blueviolet;">(?zakázat spolupráci mezi třídami?)</li>
+    <li>Je zakázána spolupráce mezi třídami.</li>
   </ul>
 
   <h3>Pravidla pro důkazové fotky (jak fotit nálepku, abychom vám důkaz uznali)</h3>
