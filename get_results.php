@@ -1,15 +1,22 @@
-<!-- $stmt = $conn->prepare("SELECT * FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
-    $stmt->bindParam(':roundId', $round['id']);
-    $stmt->execute();
-    $proof = $stmt->fetch();
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  if (!isset($_GET['round_id'])) {
+    echo "Missing round_id parameter";
+    http_response_code(400);
+    exit();
+  }
+  $config = parse_ini_file('config.ini');
 
-    if ($proof) {
-      while ($proof) {
-        echo "<tr><td>" . $proof['name'] . "</td><td>" . $proof['time'] . "</td></tr>";
-        $proof = $stmt->fetch();
-      }
-      echo "</table>";
-    } else {
-      echo "<p>Žádné výsledky</p>";
-    } -->
-lol
+  $sql_servername = $config['sql_servername'];
+  $sql_username = $config['sql_username'];
+  $sql_password = $config['sql_password'];
+
+  $conn = new PDO("mysql:host=$sql_servername;dbname=predmajalesova_hra", $sql_username, $sql_password);
+
+  $stmt = $conn->prepare("SELECT name, category, time, verified FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
+  $stmt->bindParam(':roundId', $_GET['round_id']);
+  $stmt->execute();
+  $proofs = $stmt->fetchAll();
+
+  echo json_encode($proofs);
+}

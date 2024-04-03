@@ -102,6 +102,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       padding: 1vh;
     }
 
+    table * {
+      padding: 5px;
+    }
+
+    table tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 10%);
+    }
+
+    table tr:nth-child(odd) {
+      background-color: rgba(255, 255, 255, 10%);
+    }
+
+    table th {
+      background-color: var(--accent-blue);
+      color: var(--background);
+    }
+
     @media screen and (orientation: landscape) {
       #hint_container {
         flex-direction: row;
@@ -310,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $result = $stmt->fetch();
       while ($result != false) {
 
-        $team_stmt = $conn->prepare("SELECT * FROM teams WHERE id = :teamId");
+        $team_stmt = $conn->prepare("SELECT name, category FROM teams WHERE id = :teamId");
         $team_stmt->bindParam(':teamId', $result['team_id']);
         $team_stmt->execute();
         $proof_team = $team_stmt->fetch();
@@ -451,29 +468,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <h3>Výsledky:</h3>
     <div id="results-container">
       <?php
-      $stmt = $conn->prepare("SELECT * FROM proofs WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
+      $stmt = $conn->prepare("SELECT * FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
       $stmt->bindParam(':roundId', $round_id);
       $stmt->execute();
-      $result = $stmt->fetch();
+      $allResults = $stmt->fetchAll();
 
-      echo "<table> <tr> <th> Pořadí </th> <th> Tým </th> <th> Čas </th> <th> Ověřeno adminem </th> </tr>";
-      $i = 1;
-      while ($result != false) {
-        $team_stmt = $conn->prepare("SELECT * FROM teams WHERE id = :teamId");
-        $team_stmt->bindParam(':teamId', $result['team_id']);
-        $team_stmt->execute();
-        $proof_team = $team_stmt->fetch();
+      $points = [100, 70, 50, 40, 30, 20];
+      for ($cat = 1; $cat < 4; $cat++) {
 
-        echo "<tr> <td> $i. </td> <td> " . $proof_team['name'] . " </td> <td> " . (new DateTime($row['start_time']))->diff(new DateTime($result['time']))->format("%dd %hh %im %ss") . " </td> <td> <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a> </td> </tr>";
-        // echo "Tým: " . $proof_team['name'] . "<br>";
-        // echo "Čas nahrání: " . $result['time'] . "<br>";
-        // echo "Ověřeno adminem: <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a>";
-        // echo "<button class='adminperm' onclick=\"verifyProof(" . $result['id'] . ")\">Ověřit / Zrušit ověření</button>";
-        // echo "<br><button onclick=\"deleteProof(" . $result['id'] . ")\">Smazat</button>";
-        $result = $stmt->fetch();
-        $i++;
+        echo "<h4> Kategorie " . $cat . " (" . (($cat == 1) ? "nižší" : (($cat == 2) ? "vyšší" : "přístup ke všem kolům")) . "): </h4>";
+
+        echo "<table> <tr> <th> Pořadí </th> <th> Body </th> <th> Tým </th> <th> Čas </th> <th> Ověřeno adminem </th> </tr>";
+        $i = 1;
+        foreach ($allResults as $result) {
+          if ($result['category'] != $cat) {
+            continue;
+          }
+
+          echo "<tr";
+          if ($result['verified'] == NULL) {
+            echo " style='opacity: 70%;'";
+          }
+          echo "> <td> $i. </td> <td>" . $points[$i - 1] . "</td> <td> " . $result['name'] . " </td> <td> " . (new DateTime($row['start_time']))->diff(new DateTime($result['time']))->format("%dd %hh %im %ss") . " </td> <td> <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a> </td> </tr>";
+          $i++;
+        }
+        echo "</table>";
       }
-      echo "</table>";
       ?>
     </div>
 

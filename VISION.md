@@ -1,8 +1,7 @@
 ## todo
 
-- email notif categories
 - round filtering on index
-- submit proof + delete proof (max 30mins after submit)
+- results
 - admin remove hint
 - admin remove round
 
