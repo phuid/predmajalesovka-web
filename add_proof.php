@@ -68,7 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                   if (!is_dir($target_dir)) {
                     if (!file_exists($target_dir)) {
-                      mkdir($target_dir);
+                      if (!mkdir($target_dir)) {
+                        print_r(error_get_last());
+                        echo "Error: could not create dir";
+                        $target_dir = "";
+                      }
                     } else {
                       echo "Error: proof dir exists, but isnt a dir";
                       $target_dir = "";
@@ -79,7 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $target_dir = $target_dir . "/team" . $team_id;
                     if (!is_dir($target_dir)) {
                       if (!file_exists($target_dir)) {
-                        mkdir($target_dir);
+                        if (!mkdir($target_dir)) {
+                          print_r(error_get_last());
+                          echo "Error: could not create dir";
+                          $target_dir = "";
+                        }
                       } else {
                         echo "Error: proof dir exists, but isnt a dir";
                         $target_dir = "";
@@ -106,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       $stmt->bindParam(':img_url', $target, PDO::PARAM_STR, 255);
                       $stmt->bindParam(':time', date("Y-m-d H:i:s"), PDO::PARAM_STR, 255);
                       $stmt->execute();
-                      
+
                       $stmt = $conn->prepare("SELECT * FROM proofs WHERE (round_id = :round_id AND team_id = :team_id AND img_url = :img_url) ORDER BY id DESC LIMIT 1");
                       $stmt->bindParam(':round_id', $round_id, PDO::PARAM_STR, 255);
                       $stmt->bindParam(':team_id', $team_id, PDO::PARAM_INT);
@@ -117,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       if ($result !== false) {
                         echo "Proof created";
 
-                        
+
 
                         foreach ($result as $key => $value) {
                           echo " data-$key='$value'";

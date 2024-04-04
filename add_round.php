@@ -103,7 +103,7 @@
                       // $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
                       $stmt->execute();
 
-                      $new_round_id = 0;
+                      $new_round_id = 1;
                       if ($stmt->rowCount() > 0) {
                         $current_max_round_num = $stmt->fetchColumn();
                         $new_round_id = $current_max_round_num + 1;
@@ -111,21 +111,30 @@
 
                       if (!is_dir("./hints/round$new_round_id")) {
                         if (!file_exists("./hints/round$new_round_id")) {
-                          mkdir("./hints/round$new_round_id");
-                          $target_dir = "./hints/round$new_round_id";
+                          if (!mkdir("./hints/round$new_round_id")) {
+                            print_r(error_get_last());
+                            echo "Error: could not create dir";
+                            $target_dir = "";
+                          } else {
+                            $target_dir = "./hints/round$new_round_id";
+                          }
                         } else {
                           echo "Error: hint dir exists, but isnt a dir";
                         }
                       }
 
                       if ($target_dir == "") {
-                        for ($i = 0; $i < 1000; $i++) {
+                        for ($i = 1; $i < 1000; $i++) {
                           if (!is_dir("./hints/round$i")) {
                             if (!file_exists("./hints/round$i")) {
-                              mkdir("./hints/round$i");
-                              $target_dir = "./hints/round$i";
-                              $new_round_id = $i;
-                              break;
+                              if (!mkdir("./hints/round$i")) {
+                                print_r(error_get_last());
+                                echo "Error: could not create dir";
+                              } else {
+                                $target_dir = "./hints/round$i";
+                                $new_round_id = $i;
+                                break;
+                              }
                             } else {
                               echo "Error: hint dir exists, but isnt a dir";
                               break;

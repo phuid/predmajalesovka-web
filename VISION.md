@@ -1,7 +1,7 @@
 ## todo
 
-- round filtering on index
 - results
+- round filtering on index
 - admin remove hint
 - admin remove round
 
