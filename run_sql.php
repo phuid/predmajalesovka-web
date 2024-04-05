@@ -50,6 +50,8 @@
               exit();
             }
 
+            echo "<script>document.getElementById('sql').value = \"" . $_GET['sql'] . "\"</script>";
+
             $sql = $_GET['sql'];
 
             $stmt = $conn->prepare($sql);

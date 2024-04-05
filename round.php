@@ -468,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <h3>Výsledky:</h3>
     <div id="results-container">
       <?php
-      $stmt = $conn->prepare("SELECT * FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
+      $stmt = $conn->prepare("SELECT proofs.id, round_id, team_id, time, img_url, verified, deleted, name, category FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
       $stmt->bindParam(':roundId', $round_id);
       $stmt->execute();
       $allResults = $stmt->fetchAll();
@@ -485,11 +485,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             continue;
           }
 
-          echo "<tr";
-          if ($result['verified'] == NULL) {
-            echo " style='opacity: 70%;'";
+          try {
+            echo "<tr";
+            if ($result['verified'] == NULL) {
+              echo " style='opacity: 70%;'";
+            }
+            echo ">";
+            echo "<td> $i. </td>";
+            echo "<td>" . $points[$i - 1] . "</td>";
+            echo "<td> " . $result['name'] . " </td>";
+            echo "<td> " . (new DateTime($row['start_time']))->diff(new DateTime($result['time']))->format("%dd %hh %im %ss") . " </td>";
+            echo "<td> <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a>";
+            echo "</td> </tr>";
+          } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
           }
-          echo "> <td> $i. </td> <td>" . $points[$i - 1] . "</td> <td> " . $result['name'] . " </td> <td> " . (new DateTime($row['start_time']))->diff(new DateTime($result['time']))->format("%dd %hh %im %ss") . " </td> <td> <a class='adminverify-txt'>" . (($result['verified'] === NULL) ? "zatím ne" : (($result['verified'] == false) ? "zamítnuto" : "ano")) . "</a> </td> </tr>";
           $i++;
         }
         echo "</table>";

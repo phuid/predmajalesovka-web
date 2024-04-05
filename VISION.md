@@ -1,6 +1,7 @@
 ## todo
 
 - results
+- time by php always (sql time is off)
 - round filtering on index
 - admin remove hint
 - admin remove round
