@@ -8,16 +8,16 @@
   <link rel="stylesheet" href="basicstyles.css">
 
   <style>
-    .chart {
-      width: 100%;
-    }
-
     @media screen and (orientation: portrait) {
       #body {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
+      }
+
+      .chart-containter {
+        width: 90vw;
       }
     }
 
@@ -27,6 +27,10 @@
         flex-direction: row;
         justify-content: space-around;
         align-items: center;
+      }
+
+      .chart-containter {
+        width: 30vw;
       }
     }
   </style>
@@ -58,16 +62,28 @@
 
   <div id="body">
     <div class="category-div flex flex-column">
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
     </div>
     <div class="category-div flex flex-column">
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
     </div>
     <div class="category-div flex flex-column">
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
-      <canvas class="chart" style="width:100%;max-width:700px"></canvas>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
+      <div class="chart-containter">
+        <canvas class="chart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -261,12 +277,19 @@
 
       console.log("creating charts");
 
+      Array.prototype.forEach.call(document.getElementsByClassName("chart"), (canvas) => {
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetWidth;
+      });
+
       for (let i = 0; i < 3; i++) {
         charts[i] = [
           new Chart(document.getElementsByClassName('category-div')[i].getElementsByClassName('chart')[0], {
             type: 'line',
             options: {
               indexAxis: 'x',
+              responsive: true,
+              maintainAspectRatio: false,
               scales: {
                 x: {
                   text: 'kola'
@@ -308,6 +331,8 @@
             type: 'bar',
             options: {
               indexAxis: 'y',
+              responsive: true,
+              maintainAspectRatio: false,
               scales: {
                 x: {
                   stacked: true
