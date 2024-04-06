@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Europe/Prague');
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['round_id'])) {
     $round_id = $_GET['round_id'];
@@ -468,7 +470,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <h3>Výsledky:</h3>
     <div id="results-container">
       <?php
-      $stmt = $conn->prepare("SELECT proofs.id, round_id, team_id, time, img_url, verified, deleted, name, category FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
+      $stmt = $conn->prepare("SELECT round_id, team_id, time, img_url, verified, deleted, name, category FROM proofs INNER JOIN teams ON teams.id = proofs.team_id WHERE round_id = :roundId AND deleted = false AND (verified IS NULL OR verified = true) GROUP BY team_id ORDER BY time ASC");
       $stmt->bindParam(':roundId', $round_id);
       $stmt->execute();
       $allResults = $stmt->fetchAll();

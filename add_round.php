@@ -130,6 +130,7 @@
                               if (!mkdir("./hints/round$i")) {
                                 print_r(error_get_last());
                                 echo "Error: could not create dir";
+                                $target_dir = "";
                               } else {
                                 $target_dir = "./hints/round$i";
                                 $new_round_id = $i;
@@ -185,10 +186,11 @@
 
                         move_uploaded_file($_FILES['first-hint-img']['tmp_name'], $target);
 
-                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, NOW(), :end, :hint_folder)");
+                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, :time, :end, :hint_folder)");
                         $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
                         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
                         $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
+                        $stmt->bindParam(':time', date("Y-m-d H:i:s"), PDO::PARAM_STR, 255);
                         $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
                         $stmt->execute();
                       }
@@ -203,6 +205,7 @@
                       $result = $stmt->fetch();
                       if ($result !== false) {
                         if (!(isset($_POST['edit']) && $_POST['edit'] == "true" && isset($_POST['round_id']))) {
+                          $new_round_sql_id = $result['id'];
 
                           $hint_files = scandir($target_dir);
 
@@ -233,7 +236,7 @@
                             }
                           }
 
-                          echo "round.php?round_id=$new_round_id";
+                          echo "round.php?round_id=$new_round_sql_id";
                           http_response_code(200);
                         } else {
                           echo "Round creation failed";

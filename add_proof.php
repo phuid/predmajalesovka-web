@@ -125,8 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       if ($result !== false) {
                         echo "Proof created";
 
-
-
                         foreach ($result as $key => $value) {
                           echo " data-$key='$value'";
                         }

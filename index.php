@@ -26,7 +26,7 @@
 
     <h3><a href="email_registration.php">Registrace emailových notifikací o nových nápovědách</a></h3>
 
-    <h3><a>Souhrnné výsledky (comming soon)</a></h3>
+    <h3><a href="results.php">Souhrnné výsledky</a></h3>
 
     <h3><a href="rules.php">Pravidla</a></h3>
 
@@ -151,6 +151,8 @@
 
     <div id="rounds-container">
       <?php
+      date_default_timezone_set('Europe/Prague');
+
       try {
         $config = parse_ini_file('config.ini');
 
