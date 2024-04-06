@@ -186,11 +186,10 @@
 
                         move_uploaded_file($_FILES['first-hint-img']['tmp_name'], $target);
 
-                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, :time, :end, :hint_folder)");
+                        $stmt = $conn->prepare("INSERT INTO rounds (nickname, category, start_time, end_time, hint_folder) VALUES (:nickname, :category, NOW(), :end, :hint_folder)");
                         $stmt->bindParam(':nickname', $nickname, PDO::PARAM_STR, 255);
                         $stmt->bindParam(':category', $category, PDO::PARAM_INT);
                         $stmt->bindParam(':end', $end, PDO::PARAM_STR, 255);
-                        $stmt->bindParam(':time', date("Y-m-d H:i:s"), PDO::PARAM_STR, 255);
                         $stmt->bindParam(':hint_folder', $target_dir, PDO::PARAM_STR, 255);
                         $stmt->execute();
                       }
