@@ -108,11 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if (move_uploaded_file($_FILES['img']['tmp_name'], $target)) {
 
-                      $stmt = $conn->prepare("INSERT INTO proofs (round_id, team_id, time, img_url, deleted) VALUES (:round_id, :team_id, :time, :img_url, false)");
+                      $stmt = $conn->prepare("INSERT INTO proofs (round_id, team_id, time, img_url, deleted) VALUES (:round_id, :team_id, NOW(), :img_url, false)");
                       $stmt->bindParam(':round_id', $round_id, PDO::PARAM_STR, 255);
                       $stmt->bindParam(':team_id', $team_id, PDO::PARAM_INT);
                       $stmt->bindParam(':img_url', $target, PDO::PARAM_STR, 255);
-                      $stmt->bindParam(':time', date("Y-m-d H:i:s"), PDO::PARAM_STR, 255);
                       $stmt->execute();
 
                       $stmt = $conn->prepare("SELECT * FROM proofs WHERE (round_id = :round_id AND team_id = :team_id AND img_url = :img_url) ORDER BY id DESC LIMIT 1");
