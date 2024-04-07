@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Europe/Prague');
+
 $config = parse_ini_file('config.ini');
 
 $sql_servername = $config['sql_servername'];
@@ -16,8 +18,7 @@ try {
   $row = $stmt->fetch();
   if ($row === false) {
     echo "sql time: error";
-  }
-  else {
+  } else {
     echo "sql time:" . $row[0];
   }
   echo "<br>";
@@ -27,4 +28,3 @@ try {
   exit();
   http_response_code(500);
 }
-?>

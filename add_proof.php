@@ -1,6 +1,9 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_COOKIE['password'])) {
+
+    date_default_timezone_set('Europe/Prague');
+
     $cookie_password = $_COOKIE['password'];
     $cookie_password = preg_replace('/[^0-9A-Za-z]/', '', $cookie_password);
 
