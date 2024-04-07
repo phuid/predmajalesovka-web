@@ -1,4 +1,5 @@
 setup.sql
+config.ini
 
 hints/*
 proofs/*
