@@ -211,6 +211,20 @@
             }
           }
         } else {
+          if (categories[category_create].round_ids.indexOf(round.round_id) == -1) {
+            console.log("create round", round.round_id, "for category", category_create + 1);
+            categories[category_create].round_ids.push(round.round_id);
+            categories[category_create].bargraphdatasets.forEach(dataset => {
+              dataset.push(0);
+            });
+            categories[category_create].linegraphdatasets.forEach(dataset => {
+              if (dataset.length == 0) {
+                dataset.push(0);
+              } else {
+                dataset.push(dataset[dataset.length - 1]);
+              }
+            });
+          }
           if (categories[2].round_ids.indexOf(round.round_id) == -1) {
             console.log("create round", round.round_id, "for category", 2 + 1);
             categories[2].round_ids.push(round.round_id);
@@ -230,6 +244,11 @@
         for (let i = 0; i < round.results.length; i++) {
           let result = round.results[i];
           console.log("result", result);
+
+          if (result['category'] < 1) {
+            console.log("skipping admin result");
+            continue;
+          }
 
           let category = result['category'] - 1;
           let teamname = result['name'];
